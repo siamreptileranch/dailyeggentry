@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>SRR — Egg &amp; Health Log</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600&display=swap');
+:root{
+  --fb-blue:#1877f2;--fb-blue-dk:#166fe5;--fb-blue-lt:#e7f3ff;
+  --fb-bg:#f0f2f5;--fb-surface:#fff;--fb-border:#dde1e7;
+  --fb-text:#050505;--fb-muted:#65676b;--fb-hover:#f2f2f2;
+  --green:#42b72a;--green-lt:#e6f4ea;--red:#fa3e3e;--red-lt:#fde8e8;
+  --amber:#f7b928;--amber-lt:#fff3cd;--purple:#8e44ad;--purple-lt:#f3e8fa;
+  --orange:#e67e22;--teal:#17a2b8;
+  --r:10px;--font:'Inter',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;--font-my:'Noto Sans Myanmar',var(--font);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--fb-bg);color:var(--fb-text);font-family:var(--font);font-size:15px;min-height:100vh}
+.my{font-family:var(--font-my)}
+
+/* NAV */
+.fb-nav{background:var(--fb-surface);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 2px 4px rgba(0,0,0,.08);position:sticky;top:0;z-index:200;gap:12px}
+.nav-left{display:flex;align-items:center;gap:10px;min-width:0}
+.nav-logo{background:var(--fb-blue);color:#fff;font-weight:800;font-size:20px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-title-my{font-size:11px;color:var(--fb-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.sync-pill{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:700;white-space:nowrap}
+.sync-pill.ok{background:var(--green-lt);color:#1a5c0c}
+.sync-pill.err{background:var(--red-lt);color:#8c1c1c}
+.sync-pill.syncing{background:var(--fb-blue-lt);color:#0c447c}
+.nav-clock{font-size:11px;color:var(--fb-muted);white-space:nowrap}
+
+.tabs{display:flex;gap:2px;background:var(--fb-surface);padding:0 12px;overflow-x:auto;box-shadow:0 1px 2px rgba(0,0,0,.05);position:sticky;top:56px;z-index:190}
+.tab-btn{padding:12px 16px;border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:700;color:var(--fb-muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab-btn.active{color:var(--fb-blue);border-bottom-color:var(--fb-blue)}
+
+.wrap{max-width:780px;margin:0 auto;padding:14px 12px 60px}
+
+/* Species toggle */
+.species-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.species-btn{flex-shrink:0;padding:9px 16px;border-radius:20px;border:1.5px solid var(--fb-border);background:var(--fb-surface);font-family:var(--font);font-weight:700;font-size:13px;color:var(--fb-muted);cursor:pointer;transition:all .12s}
+.species-btn.active{background:var(--fb-blue);border-color:var(--fb-blue);color:#fff}
+
+.card{background:var(--fb-surface);border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.08);padding:16px;margin-bottom:14px}
+.card-title{font-weight:800;font-size:14px;margin-bottom:2px;display:flex;align-items:center;gap:8px}
+.card-title-my{font-size:11px;color:var(--fb-muted);margin-bottom:12px}
+.section-label{font-size:11px;font-weight:800;color:var(--fb-muted);letter-spacing:.05em;text-transform:uppercase;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--fb-bg)}
+.section-label:first-child{margin-top:0;padding-top:0;border-top:none}
+
+.field{margin-bottom:10px}
+.field-label{font-size:12px;font-weight:700;color:var(--fb-text);margin-bottom:4px;display:block}
+.field-label-my{font-weight:400;color:var(--fb-muted);font-size:11px}
+.field-input{width:100%;background:var(--fb-bg);border:1.5px solid var(--fb-border);border-radius:8px;padding:9px 12px;font-size:15px;font-family:var(--font);color:var(--fb-text);outline:none;transition:border-color .12s}
+.field-input:focus{border-color:var(--fb-blue);background:#fff}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+
+.total-chip{display:inline-flex;align-items:center;gap:6px;background:var(--fb-bg);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;margin-top:6px}
+.total-chip .val{font-size:16px;color:var(--fb-blue)}
+.total-chip.fungus .val{color:var(--purple)}
+.total-chip.sw .val{color:var(--orange)}
+.total-chip.sky .val{color:var(--amber)}
+
+/* Species grid table for gecko entry */
+.sp-table{width:100%;border-collapse:collapse;font-size:13px}
+.sp-table th{background:var(--fb-bg);color:var(--fb-muted);font-size:10px;font-weight:800;letter-spacing:.03em;padding:8px 4px;text-align:center;border-bottom:1px solid var(--fb-border)}
+.sp-table td{padding:5px 3px;text-align:center;border-bottom:1px solid var(--fb-bg)}
+.sp-table td:first-child,.sp-table th:first-child{text-align:left;padding-left:8px;font-weight:700}
+.sp-input{width:56px;text-align:center;background:var(--fb-bg);border:1.5px solid var(--fb-border);border-radius:6px;padding:6px 2px;font-size:14px;font-family:var(--font);outline:none}
+.sp-input:focus{border-color:var(--fb-blue);background:#fff}
+
+.btn-row{display:flex;gap:10px;justify-content:flex-end;align-items:center;margin-top:6px}
+.btn{border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;transition:background .12s}
+.btn-primary{background:var(--fb-blue);color:#fff}
+.btn-primary:hover{background:var(--fb-blue-dk)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:var(--fb-bg);color:var(--fb-text)}
+.btn-ghost:hover{background:var(--fb-border)}
+.pending-note{font-size:12px;color:var(--fb-muted);margin-right:auto}
+
+/* Report */
+.rep-hero{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.rep-date-input{font-size:15px;font-weight:700;background:var(--fb-surface);border:1.5px solid var(--fb-border);border-radius:8px;padding:9px 14px;font-family:var(--font)}
+.rep-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px}
+@media(min-width:520px){.rep-cards{grid-template-columns:repeat(4,1fr)}}
+.rep-card{background:var(--fb-surface);border-radius:var(--r);padding:14px 8px;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.rep-card-val{font-size:24px;font-weight:800;color:var(--fb-blue)}
+.rep-card-label{font-size:11px;color:var(--fb-muted);font-weight:700;margin-top:2px}
+.rep-species-title{font-size:13px;font-weight:800;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.rep-species-title .badge{background:var(--fb-blue-lt);color:var(--fb-blue);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:800}
+
+.rep-row{display:flex;align-items:center;gap:8px;padding:8px 4px;font-size:13px;border-bottom:1px solid var(--fb-bg)}
+.rep-row:last-child{border-bottom:none}
+.rep-row-head{font-weight:800;color:var(--fb-muted);font-size:10px;letter-spacing:.03em;text-transform:uppercase}
+.rep-col-name{flex:1.4}
+.rep-col-num{flex:1;text-align:right;font-weight:700}
+.rep-empty{text-align:center;color:var(--fb-muted);font-size:13px;padding:20px 0}
+
+/* History */
+.hist-table-wrap{overflow-x:auto}
+.hist-table{width:100%;border-collapse:collapse;font-size:12px}
+.hist-table th{background:var(--fb-bg);color:var(--fb-muted);font-size:10px;font-weight:800;padding:7px 8px;text-align:center;white-space:nowrap;border-bottom:1px solid var(--fb-border)}
+.hist-table td{padding:7px 8px;text-align:center;white-space:nowrap;border-bottom:1px solid var(--fb-bg)}
+.hist-table tr:hover td{background:var(--fb-bg)}
+
+/* Stats */
+.stat-range-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.stat-range-btn{flex-shrink:0;padding:9px 16px;border-radius:20px;border:1.5px solid var(--fb-border);background:var(--fb-surface);font-family:var(--font);font-weight:700;font-size:13px;color:var(--fb-muted);cursor:pointer;transition:all .12s}
+.stat-range-btn.active{background:var(--fb-blue-lt);border-color:var(--fb-blue);color:var(--fb-blue)}
+.stat-metric-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.stat-metric-btn{flex-shrink:0;padding:9px 16px;border-radius:20px;border:1.5px solid var(--fb-border);background:var(--fb-surface);font-family:var(--font);font-weight:700;font-size:13px;color:var(--fb-muted);cursor:pointer;transition:all .12s}
+.stat-metric-btn.active{color:#fff}
+.stat-metric-btn[data-metric="eggs"].active{background:var(--fb-blue);border-color:var(--fb-blue)}
+.stat-metric-btn[data-metric="hatch"].active{background:var(--green);border-color:var(--green)}
+.stat-metric-btn[data-metric="fungus"].active{background:var(--purple);border-color:var(--purple)}
+.stat-metric-btn[data-metric="sw"].active{background:var(--orange);border-color:var(--orange)}
+.stat-metric-btn[data-metric="sky"].active{background:var(--amber);border-color:var(--amber)}
+.stat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:var(--fb-surface);border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.08);padding:16px 8px;text-align:center}
+.stat-card .num{font-size:26px;font-weight:800;line-height:1.1;margin-bottom:4px}
+.stat-card .lbl{font-size:11.5px;font-weight:700;color:var(--fb-text)}
+.stat-card .lbl-my{display:block;font-size:10px;font-weight:400;color:var(--fb-muted)}
+.chart-card{background:var(--fb-surface);border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.08);padding:16px}
+.chart-title{font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.chart-title-my{font-size:11px;color:var(--fb-muted);margin-bottom:10px}
+.chart-svg-wrap{width:100%;overflow-x:auto}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#050505;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:all .25s;z-index:999;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<nav class="fb-nav">
+  <div class="nav-left">
+    <div class="nav-logo">🥚</div>
+    <div style="min-width:0">
+      <div class="nav-title">Egg &amp; Health Log</div>
+      <div class="nav-title-my my">ဥ၊ကလေးထွက်၊ကျန်းမာရေး မှတ်တမ်း — SRR</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <span class="sync-pill syncing" id="sync-pill">⬤ Connecting…</span>
+    <span class="nav-clock" id="clock"></span>
+  </div>
+</nav>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showPage('entry')">📝 Daily Entry</button>
+  <button class="tab-btn" onclick="showPage('report')">📊 Daily Report</button>
+  <button class="tab-btn" onclick="showPage('stats')">📈 Stats</button>
+  <button class="tab-btn" onclick="showPage('history')">🕐 History</button>
+</div>
+
+<div class="wrap">
+
+  <!-- ══════════════ DAILY ENTRY ══════════════ -->
+  <div id="page-entry">
+
+    <div class="species-row">
+      <button class="species-btn active" id="sptab-bd" onclick="setEntrySpecies('bd')">🐉 BD — Bearded Dragon</button>
+      <button class="species-btn" id="sptab-gecko" onclick="setEntrySpecies('gecko')">🦎 Gecko Species</button>
+    </div>
+
+    <!-- BD FORM -->
+    <div id="bd-form">
+      <div class="card">
+        <div class="card-title">🐉 BD Daily Log <span id="bd-pending-note" style="font-weight:400;font-size:11px;color:var(--fb-muted)"></span></div>
+        <div class="card-title-my my">အထီးမန်း တိရစ္ဆာန် နေ့စဉ်မှတ်တမ်း</div>
+
+        <div class="field">
+          <label class="field-label">DATE <span class="field-label-my my">ရက်စွဲ</span></label>
+          <input type="date" class="field-input" id="bd-date">
+        </div>
+
+        <div class="section-label">🥚 EGGS COLLECTED — ဥစုစုပေါင်း</div>
+
+        <div style="font-size:11px;font-weight:800;color:var(--fb-muted);margin-bottom:4px">UC — သာမာန်အရောင်</div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">UC Egg Boxes <span class="field-label-my my">ဥသေတ္တာအရေအတွက်</span></label><input type="number" class="field-input" id="bd-ucEggBoxes" placeholder="0" min="0"></div>
+          <div class="field"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">UC Good Eggs <span class="field-label-my my">ကောင်းသောဥ</span></label><input type="number" class="field-input" id="bd-goodEggsUC" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label">UC Bad Eggs <span class="field-label-my my">မကောင်းသောဥ</span></label><input type="number" class="field-input" id="bd-badEggsUC" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+        </div>
+
+        <div style="font-size:11px;font-weight:800;color:var(--fb-muted);margin:10px 0 4px">SPECIAL MORPH — အထူးအရောင်</div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">Special Morph Egg Boxes <span class="field-label-my my">ဥသေတ္တာအရေအတွက်</span></label><input type="number" class="field-input" id="bd-specialEggBoxes" placeholder="0" min="0"></div>
+          <div class="field"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">Special Good Eggs <span class="field-label-my my">ကောင်းသောဥ</span></label><input type="number" class="field-input" id="bd-goodEggsSpecial" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label">Special Bad Eggs <span class="field-label-my my">မကောင်းသောဥ</span></label><input type="number" class="field-input" id="bd-badEggsSpecial" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+        </div>
+        <div class="total-chip">Total Good Eggs: <span class="val" id="bd-totalGoodEggs">0</span> &nbsp;&nbsp; Total Bad Eggs: <span class="val" id="bd-totalBadEggs">0</span></div>
+
+        <div class="grid-2" style="margin-top:10px">
+          <div class="field"><label class="field-label">Dud Boxes <span class="field-label-my my">မကောင်းတဲ့သေတ္တာ</span></label><input type="number" class="field-input" id="bd-dudBoxes" placeholder="0" min="0"></div>
+          <div class="field"><label class="field-label">Dud Eggs <span class="field-label-my my">မကောင်းတဲ့ဥ</span></label><input type="number" class="field-input" id="bd-dudEggs" placeholder="0" min="0"></div>
+        </div>
+
+        <div class="section-label">🐣 HATCHLINGS — ကလေးထွက်ရေ</div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">UC Hatchlings <span class="field-label-my my">သာမာန်အရောင်</span></label><input type="number" class="field-input" id="bd-ucHatchlings" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label">Special Morph Hatchlings <span class="field-label-my my">အထူးအရောင်</span></label><input type="number" class="field-input" id="bd-specialHatchlings" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+        </div>
+        <div class="total-chip">Total Hatched (UC + Special): <span class="val" id="bd-totalHatchedDisplay">0</span></div>
+
+        <div class="section-label">🩺 SICK / RECOVERED</div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">New Sick <span class="field-label-my my">အသစ်ဖျားသူ</span></label><input type="number" class="field-input" id="bd-newSick" placeholder="0" min="0"></div>
+          <div class="field"><label class="field-label">Better / Recovered <span class="field-label-my my">ပိုကောင်းလာသူ</span></label><input type="number" class="field-input" id="bd-betterSick" placeholder="0" min="0"></div>
+        </div>
+        <div class="field"><label class="field-label">Died <span class="field-label-my my">သေဆုံးသူ</span></label><input type="number" class="field-input" id="bd-died" placeholder="0" min="0"></div>
+
+        <div class="section-label">🍄 FUNGUS (FF) — မှို</div>
+        <div class="grid-4">
+          <div class="field"><label class="field-label" style="font-size:10.5px">INFR#1</label><input type="number" class="field-input" id="bd-fungusInfr1" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label" style="font-size:10.5px">INFR#2</label><input type="number" class="field-input" id="bd-fungusInfr2" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label" style="font-size:10.5px">White Tub</label><input type="number" class="field-input" id="bd-fungusWhiteTub" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label" style="font-size:10.5px">FR#</label><input type="number" class="field-input" id="bd-fungusFR" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+        </div>
+        <div class="total-chip fungus">Total Fungus: <span class="val" id="bd-totalFungus">0</span></div>
+
+        <div class="section-label">🦴 SWOLLEN JOINTS (SW) — အဆစ်ရောင်</div>
+        <div class="grid-4">
+          <div class="field"><label class="field-label" style="font-size:10.5px">INFR#1</label><input type="number" class="field-input" id="bd-swInfr1" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label" style="font-size:10.5px">INFR#2</label><input type="number" class="field-input" id="bd-swInfr2" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label" style="font-size:10.5px">White Tub</label><input type="number" class="field-input" id="bd-swWhiteTub" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label" style="font-size:10.5px">FR#</label><input type="number" class="field-input" id="bd-swFR" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+        </div>
+        <div class="total-chip sw">Total SW: <span class="val" id="bd-totalSW">0</span></div>
+
+        <div class="section-label">🩹 SKINNY (SKY) — ပိန်လှီသော</div>
+        <div class="grid-4">
+          <div class="field"><label class="field-label" style="font-size:10.5px">INFR#1</label><input type="number" class="field-input" id="bd-skyInfr1" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label" style="font-size:10.5px">INFR#2</label><input type="number" class="field-input" id="bd-skyInfr2" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label" style="font-size:10.5px">White Tub</label><input type="number" class="field-input" id="bd-skyWhiteTub" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label" style="font-size:10.5px">FR#</label><input type="number" class="field-input" id="bd-skyFR" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+        </div>
+        <div class="total-chip sky">Total Skinny: <span class="val" id="bd-totalSKY">0</span></div>
+
+        <div class="field" style="margin-top:14px">
+          <label class="field-label">LOGGED BY <span class="field-label-my my">မှတ်တမ်းတင်သူ</span></label>
+          <input class="field-input" id="bd-employee" placeholder="Your name / နာမည်">
+        </div>
+
+        <div class="btn-row">
+          <span class="pending-note" id="bd-sync-note"></span>
+          <button class="btn btn-ghost" onclick="clearBDForm()">Clear</button>
+          <button class="btn btn-primary" id="bd-save-btn" onclick="submitBD()">💾 Save &amp; Sync to Sheet</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GECKO FORM -->
+    <div id="gecko-form" style="display:none">
+      <div class="card">
+        <div class="card-title">🦎 Gecko Species Daily Log <span id="gecko-pending-note" style="font-weight:400;font-size:11px;color:var(--fb-muted)"></span></div>
+        <div class="card-title-my my">ဂျုံအမျိုးမျိုး နေ့စဉ်မှတ်တမ်း</div>
+
+        <div class="field">
+          <label class="field-label">DATE <span class="field-label-my my">ရက်စွဲ</span></label>
+          <input type="date" class="field-input" id="gecko-date">
+        </div>
+
+        <div class="section-label">🥚 EGGS COLLECTED — ဥစုစုပေါင်း</div>
+        <div class="hist-table-wrap">
+          <table class="sp-table" id="gecko-eggs-table"></table>
+        </div>
+
+        <div class="section-label">🐣 HATCH AMOUNT — မွေးကင်းစကလေးပမာဏ</div>
+        <div class="hist-table-wrap">
+          <table class="sp-table" id="gecko-hatch-table"></table>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label class="field-label">LOGGED BY <span class="field-label-my my">မှတ်တမ်းတင်သူ</span></label>
+          <input class="field-input" id="gecko-employee" placeholder="Your name / နာမည်">
+        </div>
+
+        <div class="btn-row">
+          <span class="pending-note" id="gecko-sync-note"></span>
+          <button class="btn btn-ghost" onclick="clearGeckoForm()">Clear</button>
+          <button class="btn btn-primary" id="gecko-save-btn" onclick="submitGecko()">💾 Save &amp; Sync to Sheet</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-entry -->
+
+  <!-- ══════════════ DAILY REPORT ══════════════ -->
+  <div id="page-report" style="display:none">
+    <div class="rep-hero">
+      <input type="date" class="rep-date-input" id="report-date" onchange="renderReport()">
+      <button class="btn btn-ghost" onclick="setReportToday()">Today</button>
+    </div>
+    <div id="report-body"></div>
+  </div>
+
+  <!-- ══════════════ STATS ══════════════ -->
+  <div id="page-stats" style="display:none">
+    <div class="species-row">
+      <button class="species-btn active" id="statstab-bd" onclick="setStatsSpecies('bd')">🐉 BD</button>
+      <button class="species-btn" id="statstab-gecko" onclick="setStatsSpecies('gecko')">🦎 Gecko</button>
+    </div>
+    <div class="stat-metric-row" id="stats-metric-row"></div>
+    <div class="stat-range-row" id="stats-range-row">
+      <button class="stat-range-btn active" data-range="7" onclick="setStatsRange(7)">7 Days</button>
+      <button class="stat-range-btn" data-range="30" onclick="setStatsRange(30)">30 Days</button>
+      <button class="stat-range-btn" data-range="182" onclick="setStatsRange(182)">6 Months</button>
+      <button class="stat-range-btn" data-range="365" onclick="setStatsRange(365)">1 Year</button>
+    </div>
+    <div class="stat-cards" id="stats-cards"></div>
+    <div class="chart-card">
+      <div class="chart-title" id="stats-chart-title">— OVER TIME</div>
+      <div class="chart-title-my my" id="stats-chart-title-my"></div>
+      <div class="chart-svg-wrap" id="stats-chart-wrap"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ HISTORY ══════════════ -->
+  <div id="page-history" style="display:none">
+    <div class="species-row">
+      <button class="species-btn active" id="histtab-bd" onclick="setHistSpecies('bd')">🐉 BD</button>
+      <button class="species-btn" id="histtab-gecko" onclick="setHistSpecies('gecko')">🦎 Gecko</button>
+    </div>
+    <div class="card">
+      <div class="hist-table-wrap" id="history-wrap">
+        <div style="text-align:center;color:var(--fb-muted);padding:20px">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG — point this at your Apps Script /exec URL once deployed
+// ═══════════════════════════════════════════════════════════════
+var SHEET_URL = 'https://script.google.com/macros/s/AKfycbzyBsKSsKUqYYeLfWeOfgyDEzSV-UNnrthVq4DRfmGi2tNvVr4W5rNv9wg0xeAmbbcm/exec';
+
+var GECKO_SPECIES = [
+  {code:'DG',  label:'Day Gecko'},
+  {code:'GD',  label:'Gold Dust Day Gecko'},
+  {code:'LN',  label:'Leachianus Gecko'},
+  {code:'CG',  label:'Cave Gecko'},
+  {code:'LPG', label:'Leopard Gecko'},
+  {code:'CRG', label:'Crested Gecko'},
+  {code:'GG',  label:'Gargoyle Gecko'},
+  {code:'FTG', label:'Fat-Tail Gecko'}
+];
+// Hatch amount tracks 3 extra species beyond the egg-collection list
+var GECKO_HATCH_EXTRA = [
+  {code:'IG',  label:'Iguana'},
+  {code:'BWT', label:'Blue-Tongue Skink'},
+  {code:'RT',  label:'Red Tegu'}
+];
+var GECKO_HATCH_SPECIES = GECKO_SPECIES.concat(GECKO_HATCH_EXTRA);
+
+var POLL_MS = 20000;
+var currentPage = 'entry';
+var currentEntrySpecies = 'bd';
+var currentHistSpecies = 'bd';
+
+function pad(n){ return n<10 ? '0'+n : ''+n; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function num(v){ var n=parseFloat(v); return isNaN(n)?0:n; }
+
+// ── LOCAL STORAGE (offline-first, matches the reliability pattern used
+//    across the other SRR apps: save locally FIRST, sync in background,
+//    auto-retry anything that doesn't confirm) ──────────────────────
+var BD_KEY = 'srr_eggs_bd';
+var GECKO_KEY = 'srr_eggs_gecko';
+var PENDING_KEY = 'srr_eggs_pending';
+
+function loadArr(key){ try{ var d=localStorage.getItem(key); return d?JSON.parse(d):[]; }catch(e){ return []; } }
+function saveArr(key, arr){ localStorage.setItem(key, JSON.stringify(arr)); }
+function loadPending(){ return loadArr(PENDING_KEY); }
+function savePending(arr){ saveArr(PENDING_KEY, arr); }
+
+function showToast(msg){
+  var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+function setSyncPill(label,cls){
+  var el=document.getElementById('sync-pill');
+  el.textContent='⬤ '+label; el.className='sync-pill '+cls;
+}
+
+function tick(){
+  var n=new Date();
+  document.getElementById('clock').textContent = n.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' · '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+}
+setInterval(tick,1000); tick();
+
+// ── PAGE / SPECIES SWITCHING ────────────────────────────────────────
+function showPage(page){
+  currentPage = page;
+  ['entry','report','stats','history'].forEach(function(p){
+    document.getElementById('page-'+p).style.display = p===page?'block':'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(el,i){
+    el.classList.toggle('active', ['entry','report','stats','history'][i]===page);
+  });
+  if(page==='report') renderReport();
+  if(page==='stats') renderStats();
+  if(page==='history') renderHistory();
+}
+
+function setEntrySpecies(sp){
+  currentEntrySpecies = sp;
+  document.getElementById('sptab-bd').classList.toggle('active', sp==='bd');
+  document.getElementById('sptab-gecko').classList.toggle('active', sp==='gecko');
+  document.getElementById('bd-form').style.display = sp==='bd' ? 'block':'none';
+  document.getElementById('gecko-form').style.display = sp==='gecko' ? 'block':'none';
+}
+
+function setHistSpecies(sp){
+  currentHistSpecies = sp;
+  document.getElementById('histtab-bd').classList.toggle('active', sp==='bd');
+  document.getElementById('histtab-gecko').classList.toggle('active', sp==='gecko');
+  renderHistory();
+}
+
+function setReportToday(){
+  document.getElementById('report-date').value = todayStr();
+  renderReport();
+}
+
+// ── BD FORM ──────────────────────────────────────────────────────────
+var BD_FUNGUS_FIELDS = ['fungusInfr1','fungusInfr2','fungusWhiteTub','fungusFR'];
+var BD_SW_FIELDS = ['swInfr1','swInfr2','swWhiteTub','swFR'];
+var BD_SKY_FIELDS = ['skyInfr1','skyInfr2','skyWhiteTub','skyFR'];
+
+function updateBDTotals(){
+  var fungus = BD_FUNGUS_FIELDS.reduce(function(s,f){ return s+num(document.getElementById('bd-'+f).value); },0);
+  var sw = BD_SW_FIELDS.reduce(function(s,f){ return s+num(document.getElementById('bd-'+f).value); },0);
+  var sky = BD_SKY_FIELDS.reduce(function(s,f){ return s+num(document.getElementById('bd-'+f).value); },0);
+  document.getElementById('bd-totalFungus').textContent = fungus;
+  document.getElementById('bd-totalSW').textContent = sw;
+  document.getElementById('bd-totalSKY').textContent = sky;
+
+  var goodEggs = num(document.getElementById('bd-goodEggsUC').value) + num(document.getElementById('bd-goodEggsSpecial').value);
+  var badEggs = num(document.getElementById('bd-badEggsUC').value) + num(document.getElementById('bd-badEggsSpecial').value);
+  document.getElementById('bd-totalGoodEggs').textContent = goodEggs;
+  document.getElementById('bd-totalBadEggs').textContent = badEggs;
+
+  var totalHatched = num(document.getElementById('bd-ucHatchlings').value) + num(document.getElementById('bd-specialHatchlings').value);
+  document.getElementById('bd-totalHatchedDisplay').textContent = totalHatched;
+}
+
+var BD_ALL_FIELDS = ['ucEggBoxes','specialEggBoxes','goodEggsUC','badEggsUC','goodEggsSpecial','badEggsSpecial',
+  'dudBoxes','dudEggs','ucHatchlings','specialHatchlings',
+  'newSick','betterSick','died'].concat(BD_FUNGUS_FIELDS).concat(BD_SW_FIELDS).concat(BD_SKY_FIELDS);
+
+function collectBDEntry(){
+  var e = { id:'bd_'+Date.now(), species:'bd', date:document.getElementById('bd-date').value,
+    employee:document.getElementById('bd-employee').value.trim(), synced:false };
+  BD_ALL_FIELDS.forEach(function(f){ e[f] = document.getElementById('bd-'+f).value || ''; });
+  // Auto-computed totals stored alongside the breakdown, so the report/
+  // history/backend don't need to recompute them from the raw fields.
+  e.goodEggs = num(e.goodEggsUC) + num(e.goodEggsSpecial);
+  e.badEggs = num(e.badEggsUC) + num(e.badEggsSpecial);
+  e.totalHatched = num(e.ucHatchlings) + num(e.specialHatchlings);
+  return e;
+}
+
+function submitBD(){
+  var entry = collectBDEntry();
+  if(!entry.date){ showToast('⚠️ Please set a date'); return; }
+  var arr = loadArr(BD_KEY);
+  arr.push(entry); saveArr(BD_KEY, arr);
+  saveLastBD(entry);
+  var pending = loadPending(); pending.push(entry); savePending(pending);
+  updatePendingNotes();
+  showToast('💾 Saved! Syncing to Google Sheet…');
+  pushEntry(entry, false);
+}
+
+function clearBDForm(){
+  BD_ALL_FIELDS.forEach(function(f){ document.getElementById('bd-'+f).value=''; });
+  updateBDTotals();
+}
+
+function saveLastBD(entry){ localStorage.setItem('srr_eggs_bd_last', JSON.stringify(entry)); }
+function prefillBD(){
+  var raw = localStorage.getItem('srr_eggs_bd_last');
+  if(!raw) return;
+  try{
+    var last = JSON.parse(raw);
+    BD_ALL_FIELDS.forEach(function(f){ if(last[f]) document.getElementById('bd-'+f).value = last[f]; });
+    if(last.employee) document.getElementById('bd-employee').value = last.employee;
+    updateBDTotals();
+  }catch(e){}
+}
+
+// ── GECKO FORM ───────────────────────────────────────────────────────
+function buildGeckoTables(){
+  var eggsHtml = '<tr>' + GECKO_SPECIES.map(function(s){ return '<th>'+s.code+'</th>'; }).join('') + '</tr><tr>' +
+    GECKO_SPECIES.map(function(s){ return '<td><input type="number" class="sp-input" id="gecko-eggs-'+s.code+'" min="0" placeholder="0"></td>'; }).join('') + '</tr>';
+  document.getElementById('gecko-eggs-table').innerHTML = eggsHtml;
+
+  var hatchHtml = '<tr>' + GECKO_HATCH_SPECIES.map(function(s){ return '<th>'+s.code+'</th>'; }).join('') + '</tr><tr>' +
+    GECKO_HATCH_SPECIES.map(function(s){ return '<td><input type="number" class="sp-input" id="gecko-hatch-'+s.code+'" min="0" placeholder="0"></td>'; }).join('') + '</tr>';
+  document.getElementById('gecko-hatch-table').innerHTML = hatchHtml;
+}
+
+function collectGeckoEntry(){
+  var e = { id:'gecko_'+Date.now(), species:'gecko', date:document.getElementById('gecko-date').value,
+    employee:document.getElementById('gecko-employee').value.trim(), synced:false, eggs:{}, hatch:{} };
+  GECKO_SPECIES.forEach(function(s){ e.eggs[s.code] = document.getElementById('gecko-eggs-'+s.code).value || ''; });
+  GECKO_HATCH_SPECIES.forEach(function(s){ e.hatch[s.code] = document.getElementById('gecko-hatch-'+s.code).value || ''; });
+  return e;
+}
+
+function submitGecko(){
+  var entry = collectGeckoEntry();
+  if(!entry.date){ showToast('⚠️ Please set a date'); return; }
+  var arr = loadArr(GECKO_KEY);
+  arr.push(entry); saveArr(GECKO_KEY, arr);
+  saveLastGecko(entry);
+  var pending = loadPending(); pending.push(entry); savePending(pending);
+  updatePendingNotes();
+  showToast('💾 Saved! Syncing to Google Sheet…');
+  pushEntry(entry, false);
+}
+
+function clearGeckoForm(){
+  GECKO_SPECIES.forEach(function(s){ document.getElementById('gecko-eggs-'+s.code).value=''; });
+  GECKO_HATCH_SPECIES.forEach(function(s){ document.getElementById('gecko-hatch-'+s.code).value=''; });
+}
+
+function saveLastGecko(entry){ localStorage.setItem('srr_eggs_gecko_last', JSON.stringify(entry)); }
+function prefillGecko(){
+  var raw = localStorage.getItem('srr_eggs_gecko_last');
+  if(!raw) return;
+  try{
+    var last = JSON.parse(raw);
+    GECKO_SPECIES.forEach(function(s){ if(last.eggs && last.eggs[s.code]) document.getElementById('gecko-eggs-'+s.code).value = last.eggs[s.code]; });
+    GECKO_HATCH_SPECIES.forEach(function(s){ if(last.hatch && last.hatch[s.code]) document.getElementById('gecko-hatch-'+s.code).value = last.hatch[s.code]; });
+    if(last.employee) document.getElementById('gecko-employee').value = last.employee;
+  }catch(e){}
+}
+
+// ── SYNC (save-locally-first, retry-until-confirmed, matches the
+//    pattern used across the rest of the SRR app suite) ────────────
+function pushEntry(entry, silent){
+  if(!SHEET_URL){
+    if(!silent) showToast('⚠️ No Sheet URL configured yet — ask an admin to finish setup');
+    return;
+  }
+  var btnId = entry.species==='bd' ? 'bd-save-btn' : 'gecko-save-btn';
+  var btn = document.getElementById(btnId);
+  if(!silent){ btn.textContent='⏳ Syncing…'; btn.disabled=true; }
+  setSyncPill('Syncing…','syncing');
+
+  var encoded = encodeURIComponent(JSON.stringify(entry));
+  var url = SHEET_URL + '?action=log&payload=' + encoded;
+  fetch(url, {method:'GET'})
+    .then(function(r){ return r.text(); })
+    .then(function(){
+      markSynced(entry.id);
+      setSyncPill('Live ✓ '+pad(new Date().getHours())+':'+pad(new Date().getMinutes()),'ok');
+      if(!silent) showToast('✅ Synced to Google Sheet!');
+      if(currentPage==='report') renderReport();
+      if(currentPage==='stats') renderStats();
+      if(currentPage==='history') renderHistory();
+    })
+    .catch(function(){
+      fetch(SHEET_URL, {method:'POST', mode:'no-cors', body:JSON.stringify(entry)})
+        .then(function(){
+          markSynced(entry.id);
+          setSyncPill('Live ✓ '+pad(new Date().getHours())+':'+pad(new Date().getMinutes()),'ok');
+          if(!silent) showToast('✅ Synced!');
+        })
+        .catch(function(){
+          setSyncPill('Offline — will retry','err');
+          if(!silent) showToast('⚠️ Could not reach sheet — will retry automatically');
+        });
+    })
+    .finally(function(){
+      if(!silent){ btn.textContent='💾 Save & Sync to Sheet'; btn.disabled=false; }
+    });
+}
+
+function markSynced(id){
+  var pending = loadPending().filter(function(e){ return e.id!==id; });
+  savePending(pending);
+  [BD_KEY, GECKO_KEY].forEach(function(key){
+    var arr = loadArr(key);
+    var changed=false;
+    arr.forEach(function(e){ if(e.id===id && !e.synced){ e.synced=true; changed=true; } });
+    if(changed) saveArr(key, arr);
+  });
+  updatePendingNotes();
+}
+
+function updatePendingNotes(){
+  var pending = loadPending();
+  var bdCount = pending.filter(function(e){ return e.species==='bd'; }).length;
+  var geckoCount = pending.filter(function(e){ return e.species==='gecko'; }).length;
+  document.getElementById('bd-pending-note').textContent = bdCount ? '⏳ '+bdCount+' pending sync' : '';
+  document.getElementById('gecko-pending-note').textContent = geckoCount ? '⏳ '+geckoCount+' pending sync' : '';
+  document.getElementById('bd-sync-note').textContent = bdCount ? bdCount+' entr'+(bdCount>1?'ies':'y')+' waiting to sync' : '';
+  document.getElementById('gecko-sync-note').textContent = geckoCount ? geckoCount+' entr'+(geckoCount>1?'ies':'y')+' waiting to sync' : '';
+}
+
+function retryPending(){
+  loadPending().forEach(function(e){ pushEntry(e, true); });
+}
+
+// ── PULL (live cross-device sync) ───────────────────────────────────
+function pullFromSheet(silent){
+  if(!SHEET_URL) return;
+  fetch(SHEET_URL + '?action=list&_=' + Date.now())
+    .then(function(r){ return r.text(); })
+    .then(function(txt){
+      var res;
+      try{ res = JSON.parse(txt); }
+      catch(e){ setSyncPill('Sync: check backend','err'); return; }
+      if(!res || !res.ok){ setSyncPill('Sync: check backend','err'); return; }
+      var addedBD = mergeRemote(BD_KEY, res.bd||[]);
+      var addedGecko = mergeRemote(GECKO_KEY, res.gecko||[]);
+      setSyncPill('Live ✓ '+pad(new Date().getHours())+':'+pad(new Date().getMinutes()),'ok');
+      if(addedBD+addedGecko>0){
+        if(currentPage==='report') renderReport();
+        if(currentPage==='stats') renderStats();
+        if(currentPage==='history') renderHistory();
+        if(!silent) showToast('🔄 '+(addedBD+addedGecko)+' new entr'+((addedBD+addedGecko)>1?'ies':'y')+' from other devices');
+      }
+    })
+    .catch(function(){ setSyncPill('Offline','err'); });
+}
+
+function mergeRemote(key, remoteArr){
+  var local = loadArr(key);
+  var ids = {}; local.forEach(function(e){ ids[e.id]=true; });
+  var added=0;
+  remoteArr.forEach(function(re){
+    if(ids[re.id]) return;
+    re.synced = true;
+    local.push(re); ids[re.id]=true; added++;
+  });
+  if(added>0) saveArr(key, local);
+  return added;
+}
+
+function startLivePolling(){
+  pullFromSheet(true);
+  retryPending();
+  setInterval(function(){ pullFromSheet(true); retryPending(); }, POLL_MS);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState==='visible'){ pullFromSheet(true); retryPending(); }
+  });
+  window.addEventListener('focus', function(){ pullFromSheet(true); retryPending(); });
+  window.addEventListener('online', function(){ pullFromSheet(true); retryPending(); });
+}
+
+// ── DAILY REPORT ─────────────────────────────────────────────────────
+function findBDForDate(date){
+  var arr = loadArr(BD_KEY).filter(function(e){ return e.date===date; });
+  if(!arr.length) return null;
+  arr.sort(function(a,b){ return (a.id>b.id)?1:-1; });
+  return arr[arr.length-1]; // most recently saved entry for that date
+}
+function findGeckoForDate(date){
+  var arr = loadArr(GECKO_KEY).filter(function(e){ return e.date===date; });
+  if(!arr.length) return null;
+  arr.sort(function(a,b){ return (a.id>b.id)?1:-1; });
+  return arr[arr.length-1];
+}
+
+function renderReport(){
+  var date = document.getElementById('report-date').value || todayStr();
+  if(!document.getElementById('report-date').value) document.getElementById('report-date').value = date;
+  var body = document.getElementById('report-body');
+
+  var bd = findBDForDate(date);
+  var gecko = findGeckoForDate(date);
+
+  var html = '';
+
+  // ── BD section (first, per request) ──
+  html += '<div class="rep-species-title">🐉 BD — Bearded Dragon <span class="badge">species #1</span></div>';
+  if(!bd){
+    html += '<div class="card"><div class="rep-empty">No BD entry logged for this date yet.</div></div>';
+  } else {
+    var totalEggs = num(bd.goodEggs)+num(bd.badEggs);
+    var totalHatch = num(bd.totalHatched);
+    html += '<div class="rep-cards">'+
+      repCard(totalEggs,'TOTAL EGGS')+
+      repCard(num(bd.goodEggs),'GOOD EGGS')+
+      repCard(totalHatch,'HATCHLINGS')+
+      repCard(num(bd.died),'DIED')+
+    '</div>';
+    html += '<div class="card">'+
+      '<div class="rep-row rep-row-head">🥚 EGGS — UC vs SPECIAL MORPH</div>'+
+      repRow('UC — Egg boxes / Good / Bad', num(bd.ucEggBoxes)+' / '+num(bd.goodEggsUC)+' / '+num(bd.badEggsUC))+
+      repRow('Special Morph — Egg boxes / Good / Bad', num(bd.specialEggBoxes)+' / '+num(bd.goodEggsSpecial)+' / '+num(bd.badEggsSpecial))+
+      repRow('Total good eggs / Total bad eggs', num(bd.goodEggs)+' / '+num(bd.badEggs))+
+      repRow('Dud boxes / Dud eggs', num(bd.dudBoxes)+' / '+num(bd.dudEggs))+
+      '<div class="rep-row rep-row-head" style="margin-top:8px">🐣 HATCHLINGS — UC vs SPECIAL MORPH</div>'+
+      repRow('UC hatchlings', num(bd.ucHatchlings))+
+      repRow('Special Morph hatchlings', num(bd.specialHatchlings))+
+      repRow('Total hatched (UC + Special)', totalHatch)+
+      '<div class="rep-row rep-row-head" style="margin-top:8px">🩺 HEALTH</div>'+
+      repRow('New sick / Recovered', num(bd.newSick)+' / '+num(bd.betterSick))+
+      repRow('🍄 Total fungus', BD_FUNGUS_FIELDS.reduce(function(s,f){return s+num(bd[f]);},0))+
+      repRow('🦴 Total swollen joints (SW)', BD_SW_FIELDS.reduce(function(s,f){return s+num(bd[f]);},0))+
+      repRow('🩹 Total skinny (SKY)', BD_SKY_FIELDS.reduce(function(s,f){return s+num(bd[f]);},0))+
+      (bd.employee ? repRow('Logged by', esc(bd.employee)) : '')+
+    '</div>';
+  }
+
+  // ── Gecko section ──
+  html += '<div class="rep-species-title">🦎 Gecko Species</div>';
+  if(!gecko){
+    html += '<div class="card"><div class="rep-empty">No gecko entry logged for this date yet.</div></div>';
+  } else {
+    var eggTotal=0, hatchTotal=0;
+    GECKO_SPECIES.forEach(function(s){ eggTotal += num(gecko.eggs && gecko.eggs[s.code]); });
+    GECKO_HATCH_SPECIES.forEach(function(s){ hatchTotal += num(gecko.hatch && gecko.hatch[s.code]); });
+    html += '<div class="rep-cards">'+
+      repCard(eggTotal,'TOTAL EGGS (ALL SPECIES)')+
+      repCard(hatchTotal,'TOTAL HATCHED (ALL SPECIES)')+
+    '</div>';
+    html += '<div class="card">';
+    html += '<div class="rep-row rep-row-head"><span class="rep-col-name">Species</span><span class="rep-col-num">Eggs</span><span class="rep-col-num">Hatched</span></div>';
+    GECKO_HATCH_SPECIES.forEach(function(s){
+      var eggs = gecko.eggs ? num(gecko.eggs[s.code]) : null;
+      var hatch = num(gecko.hatch && gecko.hatch[s.code]);
+      var eggsDisplay = (GECKO_SPECIES.some(function(x){return x.code===s.code;})) ? (gecko.eggs?num(gecko.eggs[s.code]):0) : '—';
+      html += '<div class="rep-row"><span class="rep-col-name">'+s.code+' <span style="color:var(--fb-muted);font-weight:400;font-size:11px">'+esc(s.label)+'</span></span><span class="rep-col-num">'+eggsDisplay+'</span><span class="rep-col-num">'+hatch+'</span></div>';
+    });
+    html += '</div>';
+    if(gecko.employee) html += '<div class="card">'+repRow('Logged by', esc(gecko.employee))+'</div>';
+  }
+
+  body.innerHTML = html;
+}
+
+function repCard(val,label){
+  return '<div class="rep-card"><div class="rep-card-val">'+val+'</div><div class="rep-card-label">'+label+'</div></div>';
+}
+function repRow(label,val){
+  return '<div class="rep-row"><span class="rep-col-name">'+label+'</span><span class="rep-col-num">'+val+'</span></div>';
+}
+
+// ── STATS ────────────────────────────────────────────────────────────
+var BD_STATS_METRICS = {
+  eggs:   { label:'Total Eggs',       labelMy:'ဥစုစုပေါင်း',       color:'#1877f2', icon:'🥚' },
+  hatch:  { label:'Hatchlings',       labelMy:'ကလေးထွက်ရေ',       color:'#42b72a', icon:'🐣' },
+  fungus: { label:'Fungus (FF)',      labelMy:'မှို',                 color:'#8e44ad', icon:'🍄' },
+  sw:     { label:'Swollen Joints (SW)', labelMy:'အဆစ်ရောင်',      color:'#e67e22', icon:'🦴' },
+  sky:    { label:'Skinny (SKY)',     labelMy:'ပိန်လှီသော',          color:'#f7b928', icon:'🩹' }
+};
+var GECKO_STATS_METRICS = {
+  eggs:  { label:'Total Eggs (all species)',       labelMy:'ဥစုစုပေါင်း',    color:'#1877f2', icon:'🥚' },
+  hatch: { label:'Total Hatchlings (all species)', labelMy:'ကလေးထွက်ရေ',    color:'#42b72a', icon:'🐣' }
+};
+var currentStatsSpecies = 'bd';
+var currentStatsMetric = 'eggs';
+var currentStatsRange = 7;
+
+function statsMetricsFor(species){ return species==='gecko' ? GECKO_STATS_METRICS : BD_STATS_METRICS; }
+
+function setStatsSpecies(sp){
+  currentStatsSpecies = sp;
+  document.getElementById('statstab-bd').classList.toggle('active', sp==='bd');
+  document.getElementById('statstab-gecko').classList.toggle('active', sp==='gecko');
+  var metrics = statsMetricsFor(sp);
+  if(!metrics[currentStatsMetric]) currentStatsMetric = Object.keys(metrics)[0];
+  buildStatsMetricRow();
+  renderStats();
+}
+
+function buildStatsMetricRow(){
+  var metrics = statsMetricsFor(currentStatsSpecies);
+  var html = Object.keys(metrics).map(function(key){
+    var m = metrics[key];
+    return '<button class="stat-metric-btn'+(key===currentStatsMetric?' active':'')+'" data-metric="'+key+'" onclick="setStatsMetric(\''+key+'\')">'+m.icon+' '+m.label.split(' (')[0]+'</button>';
+  }).join('');
+  document.getElementById('stats-metric-row').innerHTML = html;
+}
+
+function setStatsMetric(m){
+  currentStatsMetric = m;
+  document.querySelectorAll('#stats-metric-row .stat-metric-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-metric')===m);
+  });
+  renderStats();
+}
+function setStatsRange(r){
+  currentStatsRange = r;
+  document.querySelectorAll('#stats-range-row .stat-range-btn').forEach(function(b){
+    b.classList.toggle('active', Number(b.getAttribute('data-range'))===r);
+  });
+  renderStats();
+}
+
+// Value for one metric on one BD entry (the day's most-recently-saved entry)
+function metricValueFromBD(bd, metric){
+  if(!bd) return 0;
+  if(metric==='eggs')   return num(bd.goodEggs) + num(bd.badEggs);
+  if(metric==='hatch')  return num(bd.totalHatched);
+  if(metric==='fungus') return BD_FUNGUS_FIELDS.reduce(function(s,f){ return s+num(bd[f]); },0);
+  if(metric==='sw')     return BD_SW_FIELDS.reduce(function(s,f){ return s+num(bd[f]); },0);
+  if(metric==='sky')    return BD_SKY_FIELDS.reduce(function(s,f){ return s+num(bd[f]); },0);
+  return 0;
+}
+
+// Value for one metric on one Gecko entry — sums across every tracked
+// species for that day (eggs uses GECKO_SPECIES, hatch uses the wider
+// GECKO_HATCH_SPECIES list which also includes Iguana/BWT/Red Tegu)
+function metricValueFromGecko(g, metric){
+  if(!g) return 0;
+  if(metric==='eggs'){
+    return GECKO_SPECIES.reduce(function(s,sp){ return s + num(g.eggs && g.eggs[sp.code]); },0);
+  }
+  if(metric==='hatch'){
+    return GECKO_HATCH_SPECIES.reduce(function(s,sp){ return s + num(g.hatch && g.hatch[sp.code]); },0);
+  }
+  return 0;
+}
+
+function metricValueForDate(dateStr, metric, species){
+  if(species==='gecko') return metricValueFromGecko(findGeckoForDate(dateStr), metric);
+  return metricValueFromBD(findBDForDate(dateStr), metric);
+}
+
+// Builds a { dates:[...], values:[...] } series for the last `days` days
+// (including today), using the same "last saved entry per date" logic as
+// the Daily Report, for the currently selected species+metric.
+function buildStatsSeries(species, metric, days){
+  var end = new Date();
+  end.setHours(0,0,0,0);
+  var dates = [], values = [];
+  for(var i=days-1; i>=0; i--){
+    var d = new Date(end);
+    d.setDate(d.getDate()-i);
+    var dateStr = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+    dates.push(dateStr);
+    values.push(metricValueForDate(dateStr, metric, species));
+  }
+  return { dates:dates, values:values };
+}
+
+function renderStats(){
+  if(!document.getElementById('stats-metric-row').children.length) buildStatsMetricRow();
+  document.querySelectorAll('#stats-range-row .stat-range-btn').forEach(function(b){
+    b.classList.toggle('active', Number(b.getAttribute('data-range'))===currentStatsRange);
+  });
+
+  var metrics = statsMetricsFor(currentStatsSpecies);
+  var meta = metrics[currentStatsMetric] || metrics[Object.keys(metrics)[0]];
+  var series = buildStatsSeries(currentStatsSpecies, currentStatsMetric, currentStatsRange);
+
+  var todayStrVal = todayStr();
+  var yestD = new Date(); yestD.setDate(yestD.getDate()-1);
+  var yestStr = yestD.getFullYear()+'-'+pad(yestD.getMonth()+1)+'-'+pad(yestD.getDate());
+  var todayVal = metricValueForDate(todayStrVal, currentStatsMetric, currentStatsSpecies);
+  var yestVal = metricValueForDate(yestStr, currentStatsMetric, currentStatsSpecies);
+  var rangeTotal = series.values.reduce(function(s,v){ return s+v; },0);
+
+  document.getElementById('stats-cards').innerHTML =
+    '<div class="stat-card"><div class="num" style="color:'+meta.color+'">'+yestVal+'</div><div class="lbl">Yesterday<span class="lbl-my my">မနေ့က</span></div></div>'+
+    '<div class="stat-card"><div class="num" style="color:'+meta.color+'">'+todayVal+'</div><div class="lbl">Today<span class="lbl-my my">ယနေ့</span></div></div>'+
+    '<div class="stat-card"><div class="num" style="color:'+meta.color+'">'+rangeTotal+'</div><div class="lbl">Total ('+currentStatsRange+'d)<span class="lbl-my my">စုစုပေါင်း</span></div></div>';
+
+  var speciesLabel = currentStatsSpecies==='gecko' ? 'GECKO' : 'BD';
+  document.getElementById('stats-chart-title').textContent = (speciesLabel+' — '+meta.label+' Over Time — '+rangeLabel(currentStatsRange)).toUpperCase();
+  document.getElementById('stats-chart-title-my').textContent = meta.labelMy;
+  document.getElementById('stats-chart-wrap').innerHTML = lineChartSVG(series.dates, series.values, meta.color);
+}
+
+function rangeLabel(days){
+  if(days===7) return '7 Days';
+  if(days===30) return '30 Days';
+  if(days===182) return '6 Months';
+  if(days===365) return '1 Year';
+  return days+' Days';
+}
+
+// Self-contained SVG line+area chart. `dates` are 'YYYY-MM-DD' strings,
+// `values` are numbers of equal length. Renders x-axis tick labels sampled
+// down to a readable count regardless of range length.
+function lineChartSVG(dates, values, color){
+  var W = 680, H = 220, padL = 34, padR = 12, padT = 14, padB = 26;
+  var innerW = W - padL - padR, innerH = H - padT - padB;
+  var maxV = Math.max.apply(null, values.concat([1]));
+  // round the axis max up to a "nice" number
+  var niceMax = maxV <= 5 ? 5 : Math.ceil(maxV/5)*5;
+  var n = values.length;
+
+  function xFor(i){ return n<=1 ? padL : padL + (innerW * i/(n-1)); }
+  function yFor(v){ return padT + innerH - (innerH * (v/niceMax)); }
+
+  var linePts = values.map(function(v,i){ return xFor(i)+','+yFor(v); }).join(' ');
+  var areaPts = linePts + ' ' + xFor(n-1)+','+(padT+innerH) + ' ' + xFor(0)+','+(padT+innerH);
+
+  // Y-axis labels: 0, mid, max
+  var yLabels = [0, Math.round(niceMax/2), niceMax];
+
+  // X-axis labels: sample down to ~6 ticks max, always include first & last
+  var maxTicks = 6;
+  var step = Math.max(1, Math.ceil(n/maxTicks));
+  var tickIdx = [];
+  for(var i=0; i<n; i+=step) tickIdx.push(i);
+  if(tickIdx[tickIdx.length-1] !== n-1) tickIdx.push(n-1);
+
+  function fmtTick(dateStr, rangeLen){
+    var parts = dateStr.split('-');
+    var d = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+    if(rangeLen<=30) return d.toLocaleDateString('en-GB',{weekday:'short'}).slice(0,3);
+    return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+  }
+
+  var dots = values.map(function(v,i){
+    return '<circle cx="'+xFor(i)+'" cy="'+yFor(v)+'" r="3" fill="'+color+'"></circle>';
+  }).join('');
+
+  var yGrid = yLabels.map(function(lv){
+    var y = yFor(lv);
+    return '<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#eee" stroke-width="1"></line>'+
+      '<text x="'+(padL-8)+'" y="'+(y+4)+'" font-size="11" fill="#65676b" text-anchor="end" font-family="Inter,sans-serif">'+lv+'</text>';
+  }).join('');
+
+  var xLabels = tickIdx.map(function(i){
+    return '<text x="'+xFor(i)+'" y="'+(H-6)+'" font-size="11" fill="#65676b" text-anchor="middle" font-family="Inter,sans-serif">'+esc(fmtTick(dates[i], n))+'</text>';
+  }).join('');
+
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;min-width:320px" xmlns="http://www.w3.org/2000/svg">'+
+    yGrid +
+    '<polygon points="'+areaPts+'" fill="'+color+'" fill-opacity="0.12"></polygon>'+
+    '<polyline points="'+linePts+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>'+
+    dots +
+    xLabels +
+    '</svg>';
+}
+
+// ── HISTORY ──────────────────────────────────────────────────────────
+function renderHistory(){
+  var wrap = document.getElementById('history-wrap');
+  if(currentHistSpecies==='bd'){
+    var arr = loadArr(BD_KEY).slice().sort(function(a,b){ return b.date.localeCompare(a.date); });
+    if(!arr.length){ wrap.innerHTML='<div class="rep-empty">No BD entries yet.</div>'; return; }
+    var html = '<table class="hist-table"><thead><tr><th>Date</th><th>UC Good</th><th>UC Bad</th><th>Spec Good</th><th>Spec Bad</th><th>UC Hatch</th><th>Spec Hatch</th><th>Total Hatch</th><th>Fungus</th><th>SW</th><th>SKY</th><th>Died</th><th>By</th></tr></thead><tbody>';
+    arr.forEach(function(e){
+      var fungus = BD_FUNGUS_FIELDS.reduce(function(s,f){return s+num(e[f]);},0);
+      var sw = BD_SW_FIELDS.reduce(function(s,f){return s+num(e[f]);},0);
+      var sky = BD_SKY_FIELDS.reduce(function(s,f){return s+num(e[f]);},0);
+      html += '<tr><td>'+esc(e.date)+'</td><td>'+num(e.goodEggsUC)+'</td><td>'+num(e.badEggsUC)+'</td><td>'+num(e.goodEggsSpecial)+'</td><td>'+num(e.badEggsSpecial)+'</td><td>'+num(e.ucHatchlings)+'</td><td>'+num(e.specialHatchlings)+'</td><td>'+num(e.totalHatched)+'</td><td>'+fungus+'</td><td>'+sw+'</td><td>'+sky+'</td><td>'+num(e.died)+'</td><td>'+esc(e.employee)+'</td></tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  } else {
+    var arr2 = loadArr(GECKO_KEY).slice().sort(function(a,b){ return b.date.localeCompare(a.date); });
+    if(!arr2.length){ wrap.innerHTML='<div class="rep-empty">No gecko entries yet.</div>'; return; }
+    var headCols = GECKO_HATCH_SPECIES.map(function(s){ return '<th>'+s.code+' hatch</th>'; }).join('');
+    var eggCols = GECKO_SPECIES.map(function(s){ return '<th>'+s.code+' eggs</th>'; }).join('');
+    var html2 = '<table class="hist-table"><thead><tr><th>Date</th>'+eggCols+headCols+'<th>By</th></tr></thead><tbody>';
+    arr2.forEach(function(e){
+      var eggTds = GECKO_SPECIES.map(function(s){ return '<td>'+(e.eggs?num(e.eggs[s.code]):0)+'</td>'; }).join('');
+      var hatchTds = GECKO_HATCH_SPECIES.map(function(s){ return '<td>'+(e.hatch?num(e.hatch[s.code]):0)+'</td>'; }).join('');
+      html2 += '<tr><td>'+esc(e.date)+'</td>'+eggTds+hatchTds+'<td>'+esc(e.employee)+'</td></tr>';
+    });
+    html2 += '</tbody></table>';
+    wrap.innerHTML = html2;
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+(function init(){
+  document.getElementById('bd-date').value = todayStr();
+  document.getElementById('gecko-date').value = todayStr();
+  document.getElementById('report-date').value = todayStr();
+  buildGeckoTables();
+  prefillBD();
+  prefillGecko();
+  updatePendingNotes();
+  updateBDTotals();
+  showPage('entry');
+  if(SHEET_URL){ startLivePolling(); } else { setSyncPill('Not configured','err'); }
+})();
+</script>
+</body>
+</html>
