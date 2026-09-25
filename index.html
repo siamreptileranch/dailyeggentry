@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>SRR — Egg &amp; Hatchlings Overview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600&display=swap');
+:root{
+  --fb-blue:#1877f2;--fb-blue-dk:#166fe5;--fb-blue-lt:#e7f3ff;
+  --fb-bg:#f0f2f5;--fb-surface:#fff;--fb-border:#dde1e7;
+  --fb-text:#050505;--fb-muted:#65676b;--fb-hover:#f2f2f2;
+  --green:#42b72a;--green-lt:#e6f4ea;--red:#fa3e3e;--red-lt:#fde8e8;
+  --amber:#f7b928;--amber-lt:#fff3cd;--purple:#8e44ad;--purple-lt:#f3e8fa;
+  --orange:#e67e22;--teal:#17a2b8;
+  --r:10px;--font:'Inter',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;--font-my:'Noto Sans Myanmar',var(--font);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--fb-bg);color:var(--fb-text);font-family:var(--font);font-size:15px;min-height:100vh}
+.my{font-family:var(--font-my)}
+
+/* NAV */
+.fb-nav{background:var(--fb-surface);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 2px 4px rgba(0,0,0,.08);position:sticky;top:0;z-index:200;gap:12px}
+.nav-left{display:flex;align-items:center;gap:10px;min-width:0}
+.nav-logo{background:var(--fb-blue);color:#fff;font-weight:800;font-size:20px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-title-my{font-size:11px;color:var(--fb-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.sync-pill{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:700;white-space:nowrap}
+.sync-pill.ok{background:var(--green-lt);color:#1a5c0c}
+.sync-pill.err{background:var(--red-lt);color:#8c1c1c}
+.sync-pill.syncing{background:var(--fb-blue-lt);color:#0c447c}
+.nav-clock{font-size:11px;color:var(--fb-muted);white-space:nowrap}
+
+.tabs{display:flex;gap:2px;background:var(--fb-surface);padding:0 12px;overflow-x:auto;box-shadow:0 1px 2px rgba(0,0,0,.05);position:sticky;top:56px;z-index:190}
+.tab-btn{padding:12px 16px;border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:700;color:var(--fb-muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab-btn.active{color:var(--fb-blue);border-bottom-color:var(--fb-blue)}
+
+.wrap{max-width:780px;margin:0 auto;padding:14px 12px 60px}
+
+/* Species toggle */
+.species-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.species-btn{flex-shrink:0;padding:9px 16px;border-radius:20px;border:1.5px solid var(--fb-border);background:var(--fb-surface);font-family:var(--font);font-weight:700;font-size:13px;color:var(--fb-muted);cursor:pointer;transition:all .12s}
+.species-btn.active{background:var(--fb-blue);border-color:var(--fb-blue);color:#fff}
+
+.card{background:var(--fb-surface);border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.08);padding:16px;margin-bottom:14px}
+.card-title{font-weight:800;font-size:14px;margin-bottom:2px;display:flex;align-items:center;gap:8px}
+.card-title-my{font-size:11px;color:var(--fb-muted);margin-bottom:12px}
+.section-label{font-size:11px;font-weight:800;color:var(--fb-muted);letter-spacing:.05em;text-transform:uppercase;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--fb-bg)}
+.section-label:first-child{margin-top:0;padding-top:0;border-top:none}
+
+.field{margin-bottom:10px}
+.field-label{font-size:12px;font-weight:700;color:var(--fb-text);margin-bottom:4px;display:block}
+.field-label-my{font-weight:400;color:var(--fb-muted);font-size:11px}
+.field-input{width:100%;background:var(--fb-bg);border:1.5px solid var(--fb-border);border-radius:8px;padding:9px 12px;font-size:15px;font-family:var(--font);color:var(--fb-text);outline:none;transition:border-color .12s}
+.field-input:focus{border-color:var(--fb-blue);background:#fff}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+
+.total-chip{display:inline-flex;align-items:center;gap:6px;background:var(--fb-bg);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;margin-top:6px}
+.total-chip .val{font-size:16px;color:var(--fb-blue)}
+
+/* Species grid table for gecko entry */
+.sp-table{width:100%;border-collapse:collapse;font-size:13px}
+.sp-table th{background:var(--fb-bg);color:var(--fb-muted);font-size:10px;font-weight:800;letter-spacing:.03em;padding:8px 4px;text-align:center;border-bottom:1px solid var(--fb-border)}
+.sp-table td{padding:5px 3px;text-align:center;border-bottom:1px solid var(--fb-bg)}
+.sp-table td:first-child,.sp-table th:first-child{text-align:left;padding-left:8px;font-weight:700}
+.sp-input{width:56px;text-align:center;background:var(--fb-bg);border:1.5px solid var(--fb-border);border-radius:6px;padding:6px 2px;font-size:14px;font-family:var(--font);outline:none}
+.sp-input:focus{border-color:var(--fb-blue);background:#fff}
+
+.btn-row{display:flex;gap:10px;justify-content:flex-end;align-items:center;margin-top:6px}
+.btn{border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;transition:background .12s}
+.btn-primary{background:var(--fb-blue);color:#fff}
+.btn-primary:hover{background:var(--fb-blue-dk)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:var(--fb-bg);color:var(--fb-text)}
+.btn-ghost:hover{background:var(--fb-border)}
+.pending-note{font-size:12px;color:var(--fb-muted);margin-right:auto}
+
+/* Report */
+.rep-hero{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.rep-date-input{font-size:15px;font-weight:700;background:var(--fb-surface);border:1.5px solid var(--fb-border);border-radius:8px;padding:9px 14px;font-family:var(--font)}
+.rep-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px}
+@media(min-width:520px){.rep-cards{grid-template-columns:repeat(4,1fr)}}
+.rep-card{background:var(--fb-surface);border-radius:var(--r);padding:14px 8px;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.rep-card-val{font-size:24px;font-weight:800;color:var(--fb-blue)}
+.rep-card-label{font-size:11px;color:var(--fb-muted);font-weight:700;margin-top:2px}
+.rep-species-title{font-size:13px;font-weight:800;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.rep-species-title .badge{background:var(--fb-blue-lt);color:var(--fb-blue);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:800}
+
+.rep-row{display:flex;align-items:center;gap:8px;padding:8px 4px;font-size:13px;border-bottom:1px solid var(--fb-bg)}
+.rep-row:last-child{border-bottom:none}
+.rep-row-head{font-weight:800;color:var(--fb-muted);font-size:10px;letter-spacing:.03em;text-transform:uppercase}
+.rep-col-name{flex:1.4}
+.rep-col-num{flex:1;text-align:right;font-weight:700}
+.rep-empty{text-align:center;color:var(--fb-muted);font-size:13px;padding:20px 0}
+
+/* History */
+.hist-table-wrap{overflow-x:auto}
+.hist-table{width:100%;border-collapse:collapse;font-size:12px}
+.hist-table th{background:var(--fb-bg);color:var(--fb-muted);font-size:10px;font-weight:800;padding:7px 8px;text-align:center;white-space:nowrap;border-bottom:1px solid var(--fb-border)}
+.hist-table td{padding:7px 8px;text-align:center;white-space:nowrap;border-bottom:1px solid var(--fb-bg)}
+.hist-table tr:hover td{background:var(--fb-bg)}
+
+/* Stats */
+.stat-range-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.stat-range-btn{flex-shrink:0;padding:9px 16px;border-radius:20px;border:1.5px solid var(--fb-border);background:var(--fb-surface);font-family:var(--font);font-weight:700;font-size:13px;color:var(--fb-muted);cursor:pointer;transition:all .12s}
+.stat-range-btn.active{background:var(--fb-blue-lt);border-color:var(--fb-blue);color:var(--fb-blue)}
+.stat-metric-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.stat-metric-btn{flex-shrink:0;padding:9px 16px;border-radius:20px;border:1.5px solid var(--fb-border);background:var(--fb-surface);font-family:var(--font);font-weight:700;font-size:13px;color:var(--fb-muted);cursor:pointer;transition:all .12s}
+.stat-metric-btn.active{color:#fff}
+.stat-metric-btn[data-metric="eggs"].active{background:var(--fb-blue);border-color:var(--fb-blue)}
+.stat-metric-btn[data-metric="hatch"].active{background:var(--green);border-color:var(--green)}
+.stat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:var(--fb-surface);border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.08);padding:16px 8px;text-align:center}
+.stat-card .num{font-size:26px;font-weight:800;line-height:1.1;margin-bottom:4px}
+.stat-card .lbl{font-size:11.5px;font-weight:700;color:var(--fb-text)}
+.stat-card .lbl-my{display:block;font-size:10px;font-weight:400;color:var(--fb-muted)}
+.chart-card{background:var(--fb-surface);border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.08);padding:16px}
+.chart-title{font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;margin-bottom:2px}
+.chart-title-my{font-size:11px;color:var(--fb-muted);margin-bottom:10px}
+.chart-svg-wrap{width:100%;overflow-x:auto}
+
+/* ══ PRODUCTION TAB (pd-*) — merged from the Egg Production Report ══ */
+.pd-intro{font-size:12px;color:var(--fb-muted);margin:-4px 0 12px;line-height:1.5}
+.pd-intro .my{display:block;font-size:11px}
+.pd-live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--teal);margin-right:4px;vertical-align:middle}
+.pd-sec{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--fb-muted);margin:4px 0 10px;display:flex;align-items:center;gap:10px}
+.pd-sec::after{content:'';flex:1;height:1px;background:var(--fb-border)}
+.pd-sec .my{text-transform:none;letter-spacing:0;font-weight:500}
+.pd-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:18px}
+.pd-ycard{background:var(--fb-surface);border-radius:var(--r);overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.pd-ycard-top{padding:12px 14px 10px;border-bottom:1px solid var(--fb-bg)}
+.pd-ycard-yr{font-size:11px;font-weight:800;letter-spacing:.06em;margin-bottom:6px}
+.pd-ycard-big{font-size:26px;font-weight:800;line-height:1;margin-bottom:2px}
+.pd-ycard-lbl{font-size:10px;color:var(--fb-muted)}
+.pd-ycard-rows{padding:10px 14px;display:flex;flex-direction:column;gap:7px}
+.pd-yr-row{display:flex;align-items:center;gap:8px}
+.pd-yr-key{font-size:11px;color:var(--fb-muted);flex:1}
+.pd-yr-val{font-size:13px;font-weight:700}
+.pd-pill{font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;white-space:nowrap;display:inline-block}
+.pd-good{background:var(--green-lt);color:#1a5c0c}
+.pd-bad{background:var(--red-lt);color:var(--red)}
+.pd-mid{background:var(--amber-lt);color:#856404}
+.pd-blue{background:var(--fb-blue-lt);color:var(--fb-blue)}
+.pd-ybar{height:4px}
+.pd-callouts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:18px}
+.pd-callout{background:var(--fb-surface);border-radius:var(--r);padding:12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.08);border-left:4px solid var(--fb-border)}
+.pd-callout-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--fb-muted);margin-bottom:4px}
+.pd-callout-val{font-size:20px;font-weight:800;line-height:1;margin-bottom:3px}
+.pd-callout-desc{font-size:11px;color:var(--fb-muted);line-height:1.4}
+.pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.pd-card{background:var(--fb-surface);border-radius:var(--r);padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.08);min-width:0}
+.pd-card.full{grid-column:1/-1}
+.pd-card-title{font-size:13px;font-weight:800}
+.pd-card-sub{font-size:11px;color:var(--fb-muted);margin:2px 0 10px}
+.pd-card-sub .my{display:block}
+.pd-chart{position:relative;height:210px}
+.pd-chart.tall{height:260px}
+.pd-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:18px}
+.pd-stat{background:var(--fb-surface);border-radius:var(--r);padding:12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.pd-stat-lbl{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--fb-muted);margin-bottom:6px}
+.pd-stat-val{font-size:22px;font-weight:800;line-height:1;margin-bottom:2px}
+.pd-stat-sub{font-size:11px;color:var(--fb-muted)}
+.pd-tbl-wrap{overflow-x:auto}
+table.pd-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.pd-tbl th{padding:7px 10px;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--fb-muted);border-bottom:2px solid var(--fb-border);text-align:right;white-space:nowrap}
+.pd-tbl th.l,.pd-tbl td.l{text-align:left}
+.pd-tbl td{padding:7px 10px;border-bottom:1px solid var(--fb-bg);text-align:right;font-weight:600;white-space:nowrap}
+.pd-tbl td.l{font-weight:800}
+.pd-tbl tr.pd-total td{background:var(--green-lt);font-weight:800;border-top:2px solid var(--fb-border)}
+.pd-tbl th.l,.pd-tbl td.l{position:sticky;left:0;background:var(--fb-surface);z-index:1}
+.pd-tbl tr.pd-total td.l{background:var(--green-lt)}
+.pd-tbl td.na{color:#c5cad3;font-weight:400}
+.pd-tbl td.live{box-shadow:inset 0 -2px 0 var(--teal)}
+.pd-tbl td.good{color:#1a5c0c}.pd-tbl td.bad{color:var(--red)}.pd-tbl td.froze{color:var(--fb-blue)}
+.pd-months{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.pd-months button{font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;border:1.5px solid var(--fb-border);background:var(--fb-surface);cursor:pointer;color:var(--fb-muted);font-family:var(--font)}
+.pd-months button.active{background:var(--fb-blue);color:#fff;border-color:var(--fb-blue)}
+.pd-nochart{text-align:center;color:var(--fb-muted);font-size:12px;padding:30px 10px}
+@media(max-width:640px){.pd-grid{grid-template-columns:1fr}.pd-card.full{grid-column:1}}
+/* ── Per-box egg entry ── */
+.box-intro{font-size:11.5px;color:var(--fb-muted);margin:-2px 0 10px;line-height:1.45}
+.box-intro .my{display:block;font-size:10.5px}
+.box-card{border:1.5px solid var(--fb-border);border-radius:10px;padding:10px 12px 4px;margin-bottom:10px;background:#fafbfc}
+.box-card.t-UC{border-left:4px solid var(--fb-blue)}
+.box-card.t-Special{border-left:4px solid var(--purple)}
+.box-card.t-Dud{border-left:4px solid var(--fb-muted)}
+.box-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.box-no{font-weight:800;font-size:14px;min-width:52px}
+.box-type{display:flex;gap:4px;flex:1}
+.box-type button{flex:1;padding:7px 4px;border-radius:7px;border:1.5px solid var(--fb-border);background:#fff;font-family:var(--font);font-size:12px;font-weight:700;color:var(--fb-muted);cursor:pointer;line-height:1.15}
+.box-type button .my{display:block;font-size:9.5px;font-weight:500}
+.box-type button.on.UC{background:var(--fb-blue-lt);border-color:var(--fb-blue);color:var(--fb-blue)}
+.box-type button.on.Special{background:var(--purple-lt);border-color:var(--purple);color:var(--purple)}
+.box-type button.on.Dud{background:#eceef1;border-color:var(--fb-muted);color:var(--fb-text)}
+.box-icon{border:none;background:var(--fb-bg);border-radius:7px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--fb-muted);flex-shrink:0}
+.box-icon.del:hover{background:var(--red-lt);color:var(--red)}
+.box-card .field{margin-bottom:8px}
+.box-card .field-label{font-size:11px}
+.box-card .field-input{padding:8px 10px;font-size:14px;background:#fff}
+.box-card select.field-input{padding:8px 6px}
+.box-sex{font-size:10.5px;font-weight:800;color:var(--fb-muted);margin:2px 0 4px;letter-spacing:.03em}
+.add-box-btn{width:100%;border:2px dashed var(--fb-blue);background:var(--fb-blue-lt);color:var(--fb-blue);border-radius:10px;padding:12px;font-family:var(--font);font-size:14px;font-weight:800;cursor:pointer;margin-bottom:6px}
+.add-box-btn .my{font-weight:600;font-size:12px}
+.auto-note{font-size:11px;color:#0c447c;background:var(--fb-blue-lt);border-radius:8px;padding:7px 10px;margin:8px 0 10px;display:none}
+.auto-note.show{display:block}
+input.field-input.auto{background:#eef4fd;color:#0c447c;font-weight:700}
+.rep-box-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.rep-box-table th{font-size:9.5px;font-weight:800;color:var(--fb-muted);text-transform:uppercase;text-align:left;padding:6px 6px;border-bottom:1px solid var(--fb-border);white-space:nowrap}
+.rep-box-table td{padding:6px 6px;border-bottom:1px solid var(--fb-bg);vertical-align:top;white-space:nowrap}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#050505;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:all .25s;z-index:999;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<nav class="fb-nav">
+  <div class="nav-left">
+    <div class="nav-logo">🥚</div>
+    <div style="min-width:0">
+      <div class="nav-title">Egg &amp; Hatchlings Overview</div>
+      <div class="nav-title-my my">ဥနှင့် ကလေးထွက် ခြုံငုံသုံးသပ်ချက် — SRR</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <span class="sync-pill syncing" id="sync-pill">⬤ Connecting…</span>
+    <span class="nav-clock" id="clock"></span>
+  </div>
+</nav>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showPage('entry')">📝 Daily Entry</button>
+  <button class="tab-btn" onclick="showPage('report')">📊 Daily Report</button>
+  <button class="tab-btn" onclick="showPage('stats')">📈 Stats</button>
+  <button class="tab-btn" onclick="showPage('production')">🏆 Production</button>
+  <button class="tab-btn" onclick="showPage('history')">🕐 History</button>
+</div>
+
+<div class="wrap">
+
+  <!-- ══════════════ DAILY ENTRY ══════════════ -->
+  <div id="page-entry">
+
+    <div class="species-row">
+      <button class="species-btn active" id="sptab-bd" onclick="setEntrySpecies('bd')">🐉 BD — Bearded Dragon</button>
+      <button class="species-btn" id="sptab-gecko" onclick="setEntrySpecies('gecko')">🦎 Gecko Species</button>
+    </div>
+
+    <!-- BD FORM -->
+    <div id="bd-form">
+      <div class="card">
+        <div class="card-title">🐉 BD Daily Log <span id="bd-pending-note" style="font-weight:400;font-size:11px;color:var(--fb-muted)"></span></div>
+        <div class="card-title-my my">အထီးမန်း တိရစ္ဆာန် နေ့စဉ်မှတ်တမ်း</div>
+
+        <div class="field">
+          <label class="field-label">DATE <span class="field-label-my my">ရက်စွဲ</span></label>
+          <input type="date" class="field-input" id="bd-date" onchange="loadBoxesForDate()">
+        </div>
+
+        <div class="section-label">📦 EGG BOXES — ဥသေတ္တာ တစ်ခုချင်းစီ <span id="bd-box-count" style="color:var(--fb-blue)"></span></div>
+        <div class="box-intro">Add one card per box collected: type, eggs, the male and female (number + morph), group and location. The egg totals below fill in automatically from the boxes.
+          <span class="my">စုဆောင်းသော ဥသေတ္တာ တစ်ခုစီအတွက် ကတ်တစ်ခု ထည့်ပါ — အမျိုးအစား၊ ဥအရေအတွက်၊ အထီး/အမ နံပါတ်နှင့် အရောင်၊ အုပ်စု၊ တည်နေရာ။ အောက်ပါ စုစုပေါင်းများ အလိုအလျောက် ဖြည့်ပေးမည်။</span></div>
+        <div id="bd-box-list"></div>
+        <button type="button" class="add-box-btn" onclick="addBox()">＋ Add Box <span class="my">သေတ္တာ ထည့်ရန်</span></button>
+        <datalist id="morph-list"></datalist>
+
+        <div class="section-label">🥚 EGGS COLLECTED — ဥစုစုပေါင်း</div>
+        <div class="auto-note" id="bd-auto-note">🔒 Calculated from the boxes above — edit the boxes to change these. <span class="my">အထက်ပါ သေတ္တာများမှ တွက်ချက်ထားသည်</span></div>
+
+        <div style="font-size:11px;font-weight:800;color:var(--fb-muted);margin-bottom:4px">UC — သာမာန်အရောင်</div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">UC Egg Boxes <span class="field-label-my my">ဥသေတ္တာအရေအတွက်</span></label><input type="number" class="field-input" id="bd-ucEggBoxes" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">UC Good Eggs <span class="field-label-my my">ကောင်းသောဥ</span></label><input type="number" class="field-input" id="bd-goodEggsUC" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label">UC Bad Eggs <span class="field-label-my my">မကောင်းသောဥ</span></label><input type="number" class="field-input" id="bd-badEggsUC" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+        </div>
+
+        <div style="font-size:11px;font-weight:800;color:var(--fb-muted);margin:10px 0 4px">SPECIAL MORPH — အထူးအရောင်</div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">Special Morph Egg Boxes <span class="field-label-my my">ဥသေတ္တာအရေအတွက်</span></label><input type="number" class="field-input" id="bd-specialEggBoxes" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">Special Good Eggs <span class="field-label-my my">ကောင်းသောဥ</span></label><input type="number" class="field-input" id="bd-goodEggsSpecial" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label">Special Bad Eggs <span class="field-label-my my">မကောင်းသောဥ</span></label><input type="number" class="field-input" id="bd-badEggsSpecial" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+        </div>
+        <div class="total-chip">Total Good Eggs: <span class="val" id="bd-totalGoodEggs">0</span> &nbsp;&nbsp; Total Bad Eggs: <span class="val" id="bd-totalBadEggs">0</span></div>
+
+        <div class="grid-2" style="margin-top:10px">
+          <div class="field"><label class="field-label">Dud Boxes <span class="field-label-my my">မကောင်းတဲ့သေတ္တာ</span></label><input type="number" class="field-input" id="bd-dudBoxes" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label">Dud Eggs <span class="field-label-my my">မကောင်းတဲ့ဥ</span></label><input type="number" class="field-input" id="bd-dudEggs" placeholder="0" min="0"></div>
+        </div>
+        <div class="total-chip">Total Boxes Collected (UC + Special + Dud): <span class="val" id="bd-totalBoxes">0</span></div>
+
+        <div class="section-label">🐣 HATCHLINGS — ကလေးထွက်ရေ</div>
+        <div class="grid-2">
+          <div class="field"><label class="field-label">UC Hatchlings <span class="field-label-my my">သာမာန်အရောင်</span></label><input type="number" class="field-input" id="bd-ucHatchlings" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+          <div class="field"><label class="field-label">Special Morph Hatchlings <span class="field-label-my my">အထူးအရောင်</span></label><input type="number" class="field-input" id="bd-specialHatchlings" placeholder="0" min="0" oninput="updateBDTotals()"></div>
+        </div>
+        <div class="total-chip">Total Hatched (UC + Special): <span class="val" id="bd-totalHatchedDisplay">0</span></div>
+
+        <div class="field" style="margin-top:14px">
+          <label class="field-label">LOGGED BY <span class="field-label-my my">မှတ်တမ်းတင်သူ</span></label>
+          <input class="field-input" id="bd-employee" placeholder="Your name / နာမည်">
+        </div>
+
+        <div class="btn-row">
+          <span class="pending-note" id="bd-sync-note"></span>
+          <button class="btn btn-ghost" onclick="clearBDForm()">Clear</button>
+          <button class="btn btn-primary" id="bd-save-btn" onclick="submitBD()">💾 Save &amp; Sync to Sheet</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GECKO FORM -->
+    <div id="gecko-form" style="display:none">
+      <div class="card">
+        <div class="card-title">🦎 Gecko Species Daily Log <span id="gecko-pending-note" style="font-weight:400;font-size:11px;color:var(--fb-muted)"></span></div>
+        <div class="card-title-my my">ဂျုံအမျိုးမျိုး နေ့စဉ်မှတ်တမ်း</div>
+
+        <div class="field">
+          <label class="field-label">DATE <span class="field-label-my my">ရက်စွဲ</span></label>
+          <input type="date" class="field-input" id="gecko-date">
+        </div>
+
+        <div class="section-label">🥚 EGGS COLLECTED — ဥစုစုပေါင်း</div>
+        <div class="hist-table-wrap">
+          <table class="sp-table" id="gecko-eggs-table"></table>
+        </div>
+
+        <div class="section-label">🐣 HATCH AMOUNT — မွေးကင်းစကလေးပမာဏ</div>
+        <div class="hist-table-wrap">
+          <table class="sp-table" id="gecko-hatch-table"></table>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label class="field-label">LOGGED BY <span class="field-label-my my">မှတ်တမ်းတင်သူ</span></label>
+          <input class="field-input" id="gecko-employee" placeholder="Your name / နာမည်">
+        </div>
+
+        <div class="btn-row">
+          <span class="pending-note" id="gecko-sync-note"></span>
+          <button class="btn btn-ghost" onclick="clearGeckoForm()">Clear</button>
+          <button class="btn btn-primary" id="gecko-save-btn" onclick="submitGecko()">💾 Save &amp; Sync to Sheet</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-entry -->
+
+  <!-- ══════════════ DAILY REPORT ══════════════ -->
+  <div id="page-report" style="display:none">
+    <div class="rep-hero">
+      <input type="date" class="rep-date-input" id="report-date" onchange="renderReport()">
+      <button class="btn btn-ghost" onclick="setReportToday()">Today</button>
+    </div>
+    <div id="report-body"></div>
+  </div>
+
+  <!-- ══════════════ STATS ══════════════ -->
+  <div id="page-stats" style="display:none">
+    <div class="species-row">
+      <button class="species-btn active" id="statstab-bd" onclick="setStatsSpecies('bd')">🐉 BD</button>
+      <button class="species-btn" id="statstab-gecko" onclick="setStatsSpecies('gecko')">🦎 Gecko</button>
+    </div>
+    <div class="stat-metric-row" id="stats-metric-row"></div>
+    <div class="stat-range-row" id="stats-range-row">
+      <button class="stat-range-btn active" data-range="7" onclick="setStatsRange(7)">7 Days</button>
+      <button class="stat-range-btn" data-range="30" onclick="setStatsRange(30)">30 Days</button>
+      <button class="stat-range-btn" data-range="182" onclick="setStatsRange(182)">6 Months</button>
+      <button class="stat-range-btn" data-range="365" onclick="setStatsRange(365)">1 Year</button>
+    </div>
+    <div class="stat-cards" id="stats-cards"></div>
+    <div class="chart-card">
+      <div class="chart-title" id="stats-chart-title">— OVER TIME</div>
+      <div class="chart-title-my my" id="stats-chart-title-my"></div>
+      <div class="chart-svg-wrap" id="stats-chart-wrap"></div>
+    </div>
+
+    <div class="chart-card" id="combo-chart-card" style="margin-top:14px;">
+      <div class="chart-title">EGGS &amp; HATCHED (BD) — OVER TIME</div>
+      <div class="chart-title-my my">ဥ၊ ကလေးထွက် (BD)</div>
+      <div class="stat-range-row" id="combo-range-row" style="margin-top:8px;margin-bottom:10px;">
+        <button class="stat-range-btn active" data-range="7" onclick="setComboRange(7)">7 Days</button>
+        <button class="stat-range-btn" data-range="30" onclick="setComboRange(30)">30 Days</button>
+        <button class="stat-range-btn" data-range="182" onclick="setComboRange(182)">6 Months</button>
+        <button class="stat-range-btn" data-range="365" onclick="setComboRange(365)">1 Year</button>
+      </div>
+      <div class="chart-svg-wrap" id="combo-chart-wrap"></div>
+      <div id="combo-legend" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ PRODUCTION (merged Egg Production Report) ══════════════ -->
+  <div id="page-production" style="display:none">
+    <div class="pd-intro">
+      🐉 BD egg production by year and month. 2024 – May 2026 figures come from the Egg Production Report; every month after that is added up automatically from the BD Daily Entry (<span class="pd-live-dot"></span>live).
+      <span class="my">၂၀၂၄ – ၂၀၂၆ မေလ အထိ အစီရင်ခံစာမှ ဖြစ်ပြီး ထို့နောက်လများကို နေ့စဉ်မှတ်တမ်းမှ အလိုအလျောက် ပေါင်းထည့်သည်။</span>
+    </div>
+    <div class="species-row" id="pd-subtabs">
+      <button class="species-btn active" data-sub="overview" onclick="setProdSub('overview')">📊 Overview</button>
+      <button class="species-btn" data-sub="ratios" onclick="setProdSub('ratios')">📐 Ratios &amp; %</button>
+      <button class="species-btn" data-sub="monthly" onclick="setProdSub('monthly')">📅 Monthly Detail</button>
+      <button class="species-btn" data-sub="boxes" onclick="setProdSub('boxes')">📦 Boxes</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="pd-overview">
+      <div class="pd-sec">Year totals at a glance <span class="my">နှစ်အလိုက် စုစုပေါင်း</span></div>
+      <div class="pd-hero" id="pd-hero"></div>
+      <div class="pd-sec">Key insights <span class="my">အဓိက တွေ့ရှိချက်များ</span></div>
+      <div class="pd-callouts" id="pd-callouts"></div>
+      <div class="pd-sec">Good eggs vs bad eggs — all years <span class="my">ကောင်းသောဥ နှင့် မကောင်းသောဥ</span></div>
+      <div class="pd-grid">
+        <div class="pd-card full"><div class="pd-card-title">Monthly Good Eggs — Year Overlay</div><div class="pd-card-sub">Good eggs per month, one line per year<span class="my">လစဉ် ကောင်းသောဥ</span></div><div class="pd-chart tall"><canvas id="pdGoodOverlay"></canvas></div></div>
+        <div class="pd-card"><div class="pd-card-title">Monthly Bad Eggs</div><div class="pd-card-sub">Grouped by month<span class="my">လစဉ် မကောင်းသောဥ</span></div><div class="pd-chart"><canvas id="pdBadOverlay"></canvas></div></div>
+        <div class="pd-card"><div class="pd-card-title">Monthly Hatched</div><div class="pd-card-sub">Hatchlings per month<span class="my">လစဉ် ကလေးထွက်ရေ</span></div><div class="pd-chart"><canvas id="pdHatched"></canvas></div></div>
+        <div class="pd-card"><div class="pd-card-title">Year-Total Comparison</div><div class="pd-card-sub">Hatched · Good · Bad · Froze · Boxes ×10<span class="my">နှစ်အလိုက် နှိုင်းယှဉ်ချက်</span></div><div class="pd-chart"><canvas id="pdYearTotals"></canvas></div></div>
+        <div class="pd-card"><div class="pd-card-title">Good % Rate by Month</div><div class="pd-card-sub">Good ÷ (Good + Bad)<span class="my">ကောင်းသောဥ ရာခိုင်နှုန်း</span></div><div class="pd-chart"><canvas id="pdGoodRate"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- RATIOS -->
+    <div id="pd-ratios" style="display:none">
+      <div class="pd-sec">Good egg rate % — monthly <span class="my">လစဉ် ကောင်းသောဥ ရာခိုင်နှုန်း</span></div>
+      <div class="pd-grid">
+        <div class="pd-card full"><div class="pd-card-title">Good Egg % Rate — Monthly, All Years</div><div class="pd-card-sub">Higher is better · Good ÷ (Good + Bad) × 100</div><div class="pd-chart tall"><canvas id="pdRatioLine"></canvas></div></div>
+        <div id="pd-pies" style="display:contents"></div>
+        <div class="pd-card"><div class="pd-card-title">Freeze Rate % — by Year</div><div class="pd-card-sub">Froze ÷ (Good + Bad + Froze)<span class="my">ခဲသွားသောဥ ရာခိုင်နှုန်း</span></div><div class="pd-chart"><canvas id="pdFreezeRate"></canvas></div></div>
+      </div>
+      <div class="pd-sec">Monthly ratio table <span class="my">လစဉ် အချိုးဇယား</span></div>
+      <div class="pd-card"><div class="pd-tbl-wrap"><table class="pd-tbl" id="pd-ratio-table"></table></div></div>
+    </div>
+
+    <!-- MONTHLY -->
+    <div id="pd-monthly" style="display:none">
+      <div class="pd-sec">Filter by month <span class="my">လအလိုက် စစ်ထုတ်ရန်</span></div>
+      <div class="pd-months" id="pd-month-filter"></div>
+      <div class="pd-sec">Full monthly data <span class="my">လစဉ် အချက်အလက် အပြည့်အစုံ</span></div>
+      <div class="pd-card" style="margin-bottom:6px"><div class="pd-tbl-wrap"><table class="pd-tbl" id="pd-monthly-table"></table></div></div>
+      <div style="font-size:11px;color:var(--fb-muted);margin-bottom:18px"><span class="pd-live-dot"></span>Underlined = added up from the Daily Entry (live) · — = no data</div>
+      <div class="pd-sec">Monthly egg composition — stacked <span class="my">လစဉ် ဥ ဖွဲ့စည်းပုံ</span></div>
+      <div class="pd-grid" id="pd-stacks"></div>
+    </div>
+
+    <!-- BOXES -->
+    <div id="pd-boxes" style="display:none">
+      <div class="pd-sec">Boxes collected <span class="my">စုဆောင်းထားသော ဥသေတ္တာ</span></div>
+      <div class="pd-stats" id="pd-box-stats"></div>
+      <div class="pd-grid">
+        <div class="pd-card full"><div class="pd-card-title">Boxes Collected — Monthly Overlay</div><div class="pd-card-sub">One line per year<span class="my">လစဉ် ဥသေတ္တာ</span></div><div class="pd-chart tall"><canvas id="pdBoxLine"></canvas></div></div>
+        <div id="pd-eff" style="display:contents"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ HISTORY ══════════════ -->
+  <div id="page-history" style="display:none">
+    <div class="species-row">
+      <button class="species-btn active" id="histtab-bd" onclick="setHistSpecies('bd')">🐉 BD</button>
+      <button class="species-btn" id="histtab-gecko" onclick="setHistSpecies('gecko')">🦎 Gecko</button>
+    </div>
+    <div class="card">
+      <div class="hist-table-wrap" id="history-wrap">
+        <div style="text-align:center;color:var(--fb-muted);padding:20px">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG — point this at your Apps Script /exec URL once deployed
+// ═══════════════════════════════════════════════════════════════
+var SHEET_URL = 'https://script.google.com/macros/s/AKfycbzyBsKSsKUqYYeLfWeOfgyDEzSV-UNnrthVq4DRfmGi2tNvVr4W5rNv9wg0xeAmbbcm/exec';
+
+var GECKO_SPECIES = [
+  {code:'DG',  label:'Day Gecko'},
+  {code:'GD',  label:'Gold Dust Day Gecko'},
+  {code:'LN',  label:'Leachianus Gecko'},
+  {code:'CG',  label:'Cave Gecko'},
+  {code:'LPG', label:'Leopard Gecko'},
+  {code:'CRG', label:'Crested Gecko'},
+  {code:'GG',  label:'Gargoyle Gecko'},
+  {code:'FTG', label:'Fat-Tail Gecko'}
+];
+// Hatch amount tracks 3 extra species beyond the egg-collection list
+var GECKO_HATCH_EXTRA = [
+  {code:'IG',  label:'Iguana'},
+  {code:'BWT', label:'Blue-Tongue Skink'},
+  {code:'RT',  label:'Red Tegu'}
+];
+var GECKO_HATCH_SPECIES = GECKO_SPECIES.concat(GECKO_HATCH_EXTRA);
+
+var POLL_MS = 20000;
+var currentPage = 'entry';
+var currentEntrySpecies = 'bd';
+var currentHistSpecies = 'bd';
+
+function pad(n){ return n<10 ? '0'+n : ''+n; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function num(v){ var n=parseFloat(v); return isNaN(n)?0:n; }
+
+// ── LOCAL STORAGE (offline-first, matches the reliability pattern used
+//    across the other SRR apps: save locally FIRST, sync in background,
+//    auto-retry anything that doesn't confirm) ──────────────────────
+var BD_KEY = 'srr_eggs_bd';
+var GECKO_KEY = 'srr_eggs_gecko';
+var PENDING_KEY = 'srr_eggs_pending';
+
+function loadArr(key){ try{ var d=localStorage.getItem(key); return d?JSON.parse(d):[]; }catch(e){ return []; } }
+function saveArr(key, arr){ localStorage.setItem(key, JSON.stringify(arr)); }
+function loadPending(){ return loadArr(PENDING_KEY); }
+function savePending(arr){ saveArr(PENDING_KEY, arr); }
+
+function showToast(msg){
+  var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+function setSyncPill(label,cls){
+  var el=document.getElementById('sync-pill');
+  el.textContent='⬤ '+label; el.className='sync-pill '+cls;
+}
+
+function tick(){
+  var n=new Date();
+  document.getElementById('clock').textContent = n.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' · '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+}
+setInterval(tick,1000); tick();
+
+// ── PAGE / SPECIES SWITCHING ────────────────────────────────────────
+function showPage(page){
+  currentPage = page;
+  var PAGES = ['entry','report','stats','production','history'];
+  PAGES.forEach(function(p){
+    document.getElementById('page-'+p).style.display = p===page?'block':'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(el,i){
+    el.classList.toggle('active', PAGES[i]===page);
+  });
+  if(page==='report') renderReport();
+  if(page==='stats') renderStats();
+  if(page==='production') renderProduction();
+  if(page==='history') renderHistory();
+}
+
+function setEntrySpecies(sp){
+  currentEntrySpecies = sp;
+  document.getElementById('sptab-bd').classList.toggle('active', sp==='bd');
+  document.getElementById('sptab-gecko').classList.toggle('active', sp==='gecko');
+  document.getElementById('bd-form').style.display = sp==='bd' ? 'block':'none';
+  document.getElementById('gecko-form').style.display = sp==='gecko' ? 'block':'none';
+}
+
+function setHistSpecies(sp){
+  currentHistSpecies = sp;
+  document.getElementById('histtab-bd').classList.toggle('active', sp==='bd');
+  document.getElementById('histtab-gecko').classList.toggle('active', sp==='gecko');
+  renderHistory();
+}
+
+function setReportToday(){
+  document.getElementById('report-date').value = todayStr();
+  renderReport();
+}
+
+// ── BD FORM ──────────────────────────────────────────────────────────
+// Sick / Recovered / Died, Fungus (FF), Swollen Joints (SW) and Skinny (SKY)
+// were moved to the SRR2 Mortality Log app (🩺 Log Sick / Health Check card).
+var BD_BOX_FIELDS = ['ucEggBoxes','specialEggBoxes','dudBoxes'];
+
+function updateBDTotals(){
+  if(typeof applyBoxTotals==='function') applyBoxTotals();
+  var goodEggs = num(document.getElementById('bd-goodEggsUC').value) + num(document.getElementById('bd-goodEggsSpecial').value);
+  var badEggs = num(document.getElementById('bd-badEggsUC').value) + num(document.getElementById('bd-badEggsSpecial').value);
+  document.getElementById('bd-totalGoodEggs').textContent = goodEggs;
+  document.getElementById('bd-totalBadEggs').textContent = badEggs;
+
+  var totalBoxes = BD_BOX_FIELDS.reduce(function(s,f){ return s+num(document.getElementById('bd-'+f).value); },0);
+  document.getElementById('bd-totalBoxes').textContent = totalBoxes;
+
+  var totalHatched = num(document.getElementById('bd-ucHatchlings').value) + num(document.getElementById('bd-specialHatchlings').value);
+  document.getElementById('bd-totalHatchedDisplay').textContent = totalHatched;
+}
+
+// ── PER-BOX EGG ENTRY ────────────────────────────────────────────────
+// Each box: type (UC / Special / Dud), eggs, male & female (number + morph),
+// group and location. When at least one box is entered, the day's box and
+// egg totals are calculated from the boxes (fields locked). Boxes are kept
+// as a draft per date, so staff can keep adding boxes through the day and
+// every re-save of that date carries the full list.
+var BOX_TYPES = [
+  {k:'UC',      l:'UC',      my:'သာမာန်'},
+  {k:'Special', l:'Special', my:'အထူးအရောင်'},
+  {k:'Dud',     l:'Dud',     my:'မကောင်း'}
+];
+var BOX_GROUPS = ['G1','G2','G3','G4','G5','G6','Unknown'];
+var BOX_LOCATIONS = [   // same list as the SRR2 Mortality app's Location dropdown
+  {v:'Wooden Cage Room',    my:'သစ်သားလှောင်အိမ်ပုံစံ အခန်း'},
+  {v:'INFR#1 Room',         my:'အိမ်တွင်းအခန်း အမှတ် ၁'},
+  {v:'INFR#2 Room',         my:'အိမ်တွင်းအခန်း အမှတ် ၂'},
+  {v:'INFR#3 Room',         my:'အိမ်တွင်းအခန်း အမှတ် ၃'},
+  {v:'White Tub Cages',     my:'အဖြူရောင် ဗူးပုံစံ လှောင်အိမ်များ'},
+  {v:'Black Cages',         my:'အနက်ရောင် လှောင်အိမ်များ'},
+  {v:'FR# (Outdoor Cages)', my:'အပြင်ဘက်လှောင်အိမ်များ'}
+];
+var BOX_DRAFT_KEY = 'srr_eggs_bd_boxdraft';
+var bdBoxes = [];
+
+function newBox(from){
+  return { type: from ? from.type : 'UC', good:'', bad:'', dud:'',
+    maleId: from ? from.maleId : '', maleMorph: from ? from.maleMorph : '',
+    femaleId: from ? from.femaleId : '', femaleMorph: from ? from.femaleMorph : '',
+    group: from ? from.group : '', location: from ? from.location : '' };
+}
+function loadBoxDrafts(){ try{ return JSON.parse(localStorage.getItem(BOX_DRAFT_KEY)||'{}')||{}; }catch(e){ return {}; } }
+function saveBoxDraft(){
+  var date = document.getElementById('bd-date').value; if(!date) return;
+  var d = loadBoxDrafts();
+  if(bdBoxes.length) d[date] = bdBoxes; else delete d[date];
+  // keep drafts for the last 14 days only
+  var cut = new Date(); cut.setDate(cut.getDate()-14);
+  var cutStr = cut.getFullYear()+'-'+pad(cut.getMonth()+1)+'-'+pad(cut.getDate());
+  Object.keys(d).forEach(function(k){ if(k<cutStr) delete d[k]; });
+  localStorage.setItem(BOX_DRAFT_KEY, JSON.stringify(d));
+}
+function loadBoxesForDate(){
+  var date = document.getElementById('bd-date').value;
+  var d = loadBoxDrafts();
+  if(d[date]) bdBoxes = d[date];
+  else {
+    var saved = findBDForDate(date);
+    bdBoxes = (saved && saved.boxes) ? saved.boxes.map(function(b){ var c={}; Object.keys(newBox()).forEach(function(k){ c[k]= b[k]==null?'':b[k]; }); return c; }) : [];
+  }
+  renderBoxes();
+}
+function addBox(){
+  bdBoxes.push(newBox(bdBoxes.length ? {type:bdBoxes[bdBoxes.length-1].type} : null));
+  saveBoxDraft(); renderBoxes();
+  var cards = document.querySelectorAll('#bd-box-list .box-card');
+  if(cards.length){ cards[cards.length-1].scrollIntoView({behavior:'smooth',block:'center'}); }
+}
+function dupBox(i){ bdBoxes.splice(i+1, 0, newBox(bdBoxes[i])); saveBoxDraft(); renderBoxes(); }
+function removeBox(i){
+  var b = bdBoxes[i];
+  var hasData = b && (b.good||b.bad||b.dud||b.maleId||b.femaleId);
+  if(hasData && !confirm('Remove Box '+(i+1)+'? · သေတ္တာ '+(i+1)+' ကို ဖယ်ရှားမလား?')) return;
+  bdBoxes.splice(i,1); saveBoxDraft(); renderBoxes();
+}
+function setBoxType(i,t){ bdBoxes[i].type = t; if(t==='Dud'){ bdBoxes[i].good=''; bdBoxes[i].bad=''; } else bdBoxes[i].dud=''; saveBoxDraft(); renderBoxes(); }
+function setBox(i,k,v){ bdBoxes[i][k] = v; saveBoxDraft(); if(k==='good'||k==='bad'||k==='dud') updateBDTotals(); }
+
+function renderBoxes(){
+  var list = document.getElementById('bd-box-list');
+  var opt = function(arr, val, ph){ return '<option value="">'+ph+'</option>'+arr.map(function(o){ var v=o.v||o; return '<option value="'+esc(v)+'"'+(v===val?' selected':'')+'>'+esc(v)+(o.my?' — '+o.my:'')+'</option>'; }).join(''); };
+  list.innerHTML = bdBoxes.map(function(b,i){
+    var inp = function(k,label,my,ph,type){ return '<div class="field"><label class="field-label">'+label+' <span class="field-label-my my">'+my+'</span></label><input class="field-input" '+(type==='n'?'type="number" min="0" inputmode="numeric"':'type="text"'+(k.indexOf('Morph')>0?' list="morph-list" autocomplete="off"':' inputmode="numeric" autocomplete="off"'))+' value="'+esc(b[k])+'" placeholder="'+ph+'" oninput="setBox('+i+',\''+k+'\',this.value)"></div>'; };
+    var eggs = b.type==='Dud'
+      ? '<div class="grid-2">'+inp('dud','Dud Eggs','မကောင်းတဲ့ဥ','0','n')+'<div></div></div>'
+      : '<div class="grid-2">'+inp('good','Good Eggs','ကောင်းသောဥ','0','n')+inp('bad','Bad Eggs','မကောင်းသောဥ','0','n')+'</div>';
+    return '<div class="box-card t-'+b.type+'">'+
+      '<div class="box-card-head"><span class="box-no">Box '+(i+1)+'</span>'+
+        '<div class="box-type">'+BOX_TYPES.map(function(t){ return '<button type="button" class="'+t.k+(b.type===t.k?' on':'')+'" onclick="setBoxType('+i+',\''+t.k+'\')">'+t.l+'<span class="my">'+t.my+'</span></button>'; }).join('')+'</div>'+
+        '<button type="button" class="box-icon" title="Copy this box" onclick="dupBox('+i+')">⧉</button>'+
+        '<button type="button" class="box-icon del" title="Remove" onclick="removeBox('+i+')">✕</button></div>'+
+      eggs+
+      '<div class="box-sex">♂ MALE — အထီး</div>'+
+      '<div class="grid-2">'+inp('maleId','Male #','အထီး နံပါတ်','e.g. 004169')+inp('maleMorph','Male Morph','အထီး အရောင်','e.g. Hypo')+'</div>'+
+      '<div class="box-sex">♀ FEMALE — အမ</div>'+
+      '<div class="grid-2">'+inp('femaleId','Female #','အမ နံပါတ်','e.g. 004170')+inp('femaleMorph','Female Morph','အမ အရောင်','e.g. Normal')+'</div>'+
+      '<div class="grid-2">'+
+        '<div class="field"><label class="field-label">Group # <span class="field-label-my my">အုပ်စု</span></label><select class="field-input" onchange="setBox('+i+',\'group\',this.value)">'+opt(BOX_GROUPS,b.group,'— Group —')+'</select></div>'+
+        '<div class="field"><label class="field-label">Location <span class="field-label-my my">တည်နေရာ</span></label><select class="field-input" onchange="setBox('+i+',\'location\',this.value)">'+opt(BOX_LOCATIONS,b.location,'— Location —')+'</select></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('bd-box-count').textContent = bdBoxes.length ? '('+bdBoxes.length+')' : '';
+  buildMorphList();
+  updateBDTotals();
+}
+function buildMorphList(){
+  var seen = {};
+  loadArr(BD_KEY).concat([{boxes:bdBoxes}]).forEach(function(e){ (e.boxes||[]).forEach(function(b){
+    [b.maleMorph,b.femaleMorph].forEach(function(m){ m=String(m||'').trim(); if(m) seen[m.toLowerCase()] = seen[m.toLowerCase()] || m; });
+  }); });
+  document.getElementById('morph-list').innerHTML = Object.keys(seen).sort().map(function(k){ return '<option value="'+esc(seen[k])+'">'; }).join('');
+}
+var BOX_AUTO_FIELDS = ['ucEggBoxes','specialEggBoxes','dudBoxes','goodEggsUC','badEggsUC','goodEggsSpecial','badEggsSpecial','dudEggs'];
+function applyBoxTotals(){
+  var on = bdBoxes.length > 0;
+  BOX_AUTO_FIELDS.forEach(function(f){
+    var el = document.getElementById('bd-'+f);
+    el.readOnly = on; el.classList.toggle('auto', on);
+  });
+  document.getElementById('bd-auto-note').classList.toggle('show', on);
+  if(!on) return;
+  var t = {ucEggBoxes:0,specialEggBoxes:0,dudBoxes:0,goodEggsUC:0,badEggsUC:0,goodEggsSpecial:0,badEggsSpecial:0,dudEggs:0};
+  bdBoxes.forEach(function(b){
+    if(b.type==='UC'){ t.ucEggBoxes++; t.goodEggsUC+=num(b.good); t.badEggsUC+=num(b.bad); }
+    else if(b.type==='Special'){ t.specialEggBoxes++; t.goodEggsSpecial+=num(b.good); t.badEggsSpecial+=num(b.bad); }
+    else { t.dudBoxes++; t.dudEggs+=num(b.dud); }
+  });
+  BOX_AUTO_FIELDS.forEach(function(f){ document.getElementById('bd-'+f).value = t[f]; });
+}
+function cleanBoxes(){
+  // drop completely empty cards; number the rest
+  return bdBoxes.filter(function(b){ return b.good!==''||b.bad!==''||b.dud!==''||b.maleId||b.femaleId||b.maleMorph||b.femaleMorph||b.group||b.location; })
+    .map(function(b,i){ return { boxNo:i+1, type:b.type, good:num(b.good), bad:num(b.bad), dud:num(b.dud),
+      maleId:String(b.maleId||'').trim(), maleMorph:String(b.maleMorph||'').trim(),
+      femaleId:String(b.femaleId||'').trim(), femaleMorph:String(b.femaleMorph||'').trim(),
+      group:b.group||'', location:b.location||'' }; });
+}
+
+var BD_ALL_FIELDS = ['ucEggBoxes','specialEggBoxes','goodEggsUC','badEggsUC','goodEggsSpecial','badEggsSpecial',
+  'dudBoxes','dudEggs','ucHatchlings','specialHatchlings'];
+
+function collectBDEntry(){
+  var e = { id:'bd_'+Date.now(), species:'bd', date:document.getElementById('bd-date').value,
+    employee:document.getElementById('bd-employee').value.trim(), synced:false };
+  BD_ALL_FIELDS.forEach(function(f){ e[f] = document.getElementById('bd-'+f).value || ''; });
+  // Auto-computed totals stored alongside the breakdown, so the report/
+  // history/backend don't need to recompute them from the raw fields.
+  e.goodEggs = num(e.goodEggsUC) + num(e.goodEggsSpecial);
+  e.badEggs = num(e.badEggsUC) + num(e.badEggsSpecial);
+  e.totalBoxes = BD_BOX_FIELDS.reduce(function(s,f){ return s+num(e[f]); },0);
+  e.totalHatched = num(e.ucHatchlings) + num(e.specialHatchlings);
+  e.boxes = cleanBoxes();
+  return e;
+}
+
+function submitBD(){
+  var entry = collectBDEntry();
+  if(!entry.date){ showToast('⚠️ Please set a date'); return; }
+  var arr = loadArr(BD_KEY);
+  arr.push(entry); saveArr(BD_KEY, arr);
+  saveLastBD(entry);
+  if(currentPage==='production') renderProduction();
+  var pending = loadPending(); pending.push(entry); savePending(pending);
+  updatePendingNotes();
+  showToast('💾 Saved! Syncing to Google Sheet…');
+  pushEntry(entry, false);
+}
+
+function clearBDForm(){
+  if(bdBoxes.length && !confirm('Clear the form and all '+bdBoxes.length+' box(es) for this date? · ဖျက်မလား?')) return;
+  bdBoxes = []; saveBoxDraft(); renderBoxes();
+  BD_ALL_FIELDS.forEach(function(f){ document.getElementById('bd-'+f).value=''; });
+  updateBDTotals();
+}
+
+function saveLastBD(entry){ var c = Object.assign({}, entry); delete c.boxes; localStorage.setItem('srr_eggs_bd_last', JSON.stringify(c)); }
+function prefillBD(){
+  var raw = localStorage.getItem('srr_eggs_bd_last');
+  if(!raw) return;
+  try{
+    var last = JSON.parse(raw);
+    BD_ALL_FIELDS.forEach(function(f){ if(last[f]) document.getElementById('bd-'+f).value = last[f]; });
+    if(last.employee) document.getElementById('bd-employee').value = last.employee;
+    updateBDTotals();
+  }catch(e){}
+}
+
+// ── GECKO FORM ───────────────────────────────────────────────────────
+function buildGeckoTables(){
+  var eggsHtml = '<tr>' + GECKO_SPECIES.map(function(s){ return '<th>'+s.code+'</th>'; }).join('') + '</tr><tr>' +
+    GECKO_SPECIES.map(function(s){ return '<td><input type="number" class="sp-input" id="gecko-eggs-'+s.code+'" min="0" placeholder="0"></td>'; }).join('') + '</tr>';
+  document.getElementById('gecko-eggs-table').innerHTML = eggsHtml;
+
+  var hatchHtml = '<tr>' + GECKO_HATCH_SPECIES.map(function(s){ return '<th>'+s.code+'</th>'; }).join('') + '</tr><tr>' +
+    GECKO_HATCH_SPECIES.map(function(s){ return '<td><input type="number" class="sp-input" id="gecko-hatch-'+s.code+'" min="0" placeholder="0"></td>'; }).join('') + '</tr>';
+  document.getElementById('gecko-hatch-table').innerHTML = hatchHtml;
+}
+
+function collectGeckoEntry(){
+  var e = { id:'gecko_'+Date.now(), species:'gecko', date:document.getElementById('gecko-date').value,
+    employee:document.getElementById('gecko-employee').value.trim(), synced:false, eggs:{}, hatch:{} };
+  GECKO_SPECIES.forEach(function(s){ e.eggs[s.code] = document.getElementById('gecko-eggs-'+s.code).value || ''; });
+  GECKO_HATCH_SPECIES.forEach(function(s){ e.hatch[s.code] = document.getElementById('gecko-hatch-'+s.code).value || ''; });
+  return e;
+}
+
+function submitGecko(){
+  var entry = collectGeckoEntry();
+  if(!entry.date){ showToast('⚠️ Please set a date'); return; }
+  var arr = loadArr(GECKO_KEY);
+  arr.push(entry); saveArr(GECKO_KEY, arr);
+  saveLastGecko(entry);
+  var pending = loadPending(); pending.push(entry); savePending(pending);
+  updatePendingNotes();
+  showToast('💾 Saved! Syncing to Google Sheet…');
+  pushEntry(entry, false);
+}
+
+function clearGeckoForm(){
+  GECKO_SPECIES.forEach(function(s){ document.getElementById('gecko-eggs-'+s.code).value=''; });
+  GECKO_HATCH_SPECIES.forEach(function(s){ document.getElementById('gecko-hatch-'+s.code).value=''; });
+}
+
+function saveLastGecko(entry){ localStorage.setItem('srr_eggs_gecko_last', JSON.stringify(entry)); }
+function prefillGecko(){
+  var raw = localStorage.getItem('srr_eggs_gecko_last');
+  if(!raw) return;
+  try{
+    var last = JSON.parse(raw);
+    GECKO_SPECIES.forEach(function(s){ if(last.eggs && last.eggs[s.code]) document.getElementById('gecko-eggs-'+s.code).value = last.eggs[s.code]; });
+    GECKO_HATCH_SPECIES.forEach(function(s){ if(last.hatch && last.hatch[s.code]) document.getElementById('gecko-hatch-'+s.code).value = last.hatch[s.code]; });
+    if(last.employee) document.getElementById('gecko-employee').value = last.employee;
+  }catch(e){}
+}
+
+// ── SYNC (save-locally-first, retry-until-confirmed, matches the
+//    pattern used across the rest of the SRR app suite) ────────────
+// Sends the day entry first (without the box list, so the URL stays short),
+// then the boxes in small batches to action=log_boxes. The entry only counts
+// as synced once the sheet has confirmed BOTH. If the boxes fail, the retry
+// resends only the boxes (the sheet updates them by BoxId, so no duplicates)
+// and never re-appends the day entry.
+var PUSH_IN_FLIGHT = {};
+function markMainSent(id){
+  var pending = loadPending();
+  pending.forEach(function(e){ if(e.id===id) e.mainSent = true; });
+  savePending(pending);
+}
+function boxBatches(entry){
+  var boxes = entry.boxes||[], out = [], cur = [];
+  var base = { entryId:entry.id, date:entry.date, employee:entry.employee||'', boxTotal:boxes.length };
+  boxes.forEach(function(b){
+    var trial = cur.concat([b]);
+    var len = encodeURIComponent(JSON.stringify(Object.assign({}, base, {boxes:trial}))).length;
+    if(cur.length && len > 5500){ out.push(cur); cur = [b]; } else cur = trial;
+  });
+  if(cur.length) out.push(cur);
+  return out.map(function(chunk){ return Object.assign({}, base, {boxes:chunk}); });
+}
+function getJSON(url){
+  return fetch(url, {method:'GET'}).then(function(r){ return r.text(); }).then(function(t){
+    var j; try{ j = JSON.parse(t); }catch(e){ throw new Error('bad response'); }
+    if(!j || j.ok!==true) throw new Error((j && j.error) || 'not ok');
+    return j;
+  });
+}
+function sendMain(entry){
+  var main = Object.assign({}, entry); delete main.boxes; delete main.mainSent;
+  main.boxCount = (entry.boxes||[]).length;
+  var url = SHEET_URL + '?action=log&payload=' + encodeURIComponent(JSON.stringify(main));
+  return getJSON(url).catch(function(){
+    // fallback: POST (response can't be read — treated as sent, as before)
+    return fetch(SHEET_URL + '?action=log', {method:'POST', mode:'no-cors', body:JSON.stringify(main)});
+  });
+}
+function sendBoxes(entry){
+  var batches = boxBatches(entry);
+  return batches.reduce(function(p, payload){
+    return p.then(function(){ return getJSON(SHEET_URL + '?action=log_boxes&payload=' + encodeURIComponent(JSON.stringify(payload))); });
+  }, Promise.resolve());
+}
+function pushEntry(entry, silent){
+  if(!SHEET_URL){
+    if(!silent) showToast('⚠️ No Sheet URL configured yet — ask an admin to finish setup');
+    return;
+  }
+  if(PUSH_IN_FLIGHT[entry.id]) return;
+  PUSH_IN_FLIGHT[entry.id] = true;
+  var btnId = entry.species==='bd' ? 'bd-save-btn' : 'gecko-save-btn';
+  var btn = document.getElementById(btnId);
+  if(!silent){ btn.textContent='⏳ Syncing…'; btn.disabled=true; }
+  setSyncPill('Syncing…','syncing');
+
+  var step = entry.mainSent ? Promise.resolve() : sendMain(entry).then(function(){ entry.mainSent = true; markMainSent(entry.id); });
+  step
+    .then(function(){ return (entry.boxes && entry.boxes.length) ? sendBoxes(entry) : null; })
+    .then(function(){
+      markSynced(entry.id);
+      setSyncPill('Live ✓ '+pad(new Date().getHours())+':'+pad(new Date().getMinutes()),'ok');
+      if(!silent) showToast('✅ Synced to Google Sheet!');
+      if(currentPage==='report') renderReport();
+      if(currentPage==='stats') renderStats();
+      if(currentPage==='production') renderProduction();
+      if(currentPage==='history') renderHistory();
+    })
+    .catch(function(){
+      setSyncPill('Offline — will retry','err');
+      if(!silent) showToast(entry.mainSent ? '⚠️ Day saved — boxes will retry automatically' : '⚠️ Could not reach sheet — will retry automatically');
+    })
+    .then(function(){
+      PUSH_IN_FLIGHT[entry.id] = false;
+      if(!silent){ btn.textContent='💾 Save & Sync to Sheet'; btn.disabled=false; }
+    });
+}
+
+function markSynced(id){
+  var pending = loadPending().filter(function(e){ return e.id!==id; });
+  savePending(pending);
+  [BD_KEY, GECKO_KEY].forEach(function(key){
+    var arr = loadArr(key);
+    var changed=false;
+    arr.forEach(function(e){ if(e.id===id && !e.synced){ e.synced=true; changed=true; } });
+    if(changed) saveArr(key, arr);
+  });
+  updatePendingNotes();
+}
+
+function updatePendingNotes(){
+  var pending = loadPending();
+  var bdCount = pending.filter(function(e){ return e.species==='bd'; }).length;
+  var geckoCount = pending.filter(function(e){ return e.species==='gecko'; }).length;
+  document.getElementById('bd-pending-note').textContent = bdCount ? '⏳ '+bdCount+' pending sync' : '';
+  document.getElementById('gecko-pending-note').textContent = geckoCount ? '⏳ '+geckoCount+' pending sync' : '';
+  document.getElementById('bd-sync-note').textContent = bdCount ? bdCount+' entr'+(bdCount>1?'ies':'y')+' waiting to sync' : '';
+  document.getElementById('gecko-sync-note').textContent = geckoCount ? geckoCount+' entr'+(geckoCount>1?'ies':'y')+' waiting to sync' : '';
+}
+
+function retryPending(){
+  loadPending().forEach(function(e){ pushEntry(e, true); });
+}
+
+// ── PULL (live cross-device sync) ───────────────────────────────────
+function pullFromSheet(silent){
+  if(!SHEET_URL) return;
+  fetch(SHEET_URL + '?action=list&_=' + Date.now())
+    .then(function(r){ return r.text(); })
+    .then(function(txt){
+      var res;
+      try{ res = JSON.parse(txt); }
+      catch(e){ setSyncPill('Sync: check backend','err'); return; }
+      if(!res || !res.ok){ setSyncPill('Sync: check backend','err'); return; }
+      var addedBD = mergeRemote(BD_KEY, res.bd||[]);
+      addedBD += mergeRemoteBoxes(res.boxes||[]);
+      if(addedBD && !bdBoxes.length && !loadBoxDrafts()[document.getElementById('bd-date').value]) loadBoxesForDate();
+      var addedGecko = mergeRemote(GECKO_KEY, res.gecko||[]);
+      setSyncPill('Live ✓ '+pad(new Date().getHours())+':'+pad(new Date().getMinutes()),'ok');
+      if(addedBD+addedGecko>0){
+        if(currentPage==='report') renderReport();
+        if(currentPage==='stats') renderStats();
+        if(currentPage==='production') renderProduction();
+        if(currentPage==='history') renderHistory();
+        if(!silent) showToast('🔄 '+(addedBD+addedGecko)+' new entr'+((addedBD+addedGecko)>1?'ies':'y')+' from other devices');
+      }
+    })
+    .catch(function(){ setSyncPill('Offline','err'); });
+}
+
+function mergeRemote(key, remoteArr){
+  var local = loadArr(key);
+  var ids = {}; local.forEach(function(e){ ids[e.id]=true; });
+  var added=0;
+  remoteArr.forEach(function(re){
+    if(ids[re.id]) return;
+    re.synced = true;
+    local.push(re); ids[re.id]=true; added++;
+  });
+  if(added>0) saveArr(key, local);
+  return added;
+}
+
+// Attach boxes from the BD_Boxes sheet to their day entries (by entry id)
+function mergeRemoteBoxes(remoteBoxes){
+  if(!Array.isArray(remoteBoxes) || !remoteBoxes.length) return 0;
+  var byEntry = {};
+  remoteBoxes.forEach(function(b){ if(b && b.entryId){ (byEntry[b.entryId] = byEntry[b.entryId] || []).push(b); } });
+  var arr = loadArr(BD_KEY), changed = 0;
+  arr.forEach(function(e){
+    var rb = byEntry[e.id];
+    if(!rb) return;
+    if(!e.boxes || e.boxes.length < rb.length){
+      e.boxes = rb.slice().sort(function(a,b){ return num(a.boxNo)-num(b.boxNo); }).map(function(b){
+        return { boxNo:num(b.boxNo), type:b.type||'UC', good:num(b.good), bad:num(b.bad), dud:num(b.dud),
+          maleId:String(b.maleId==null?'':b.maleId), maleMorph:b.maleMorph||'', femaleId:String(b.femaleId==null?'':b.femaleId),
+          femaleMorph:b.femaleMorph||'', group:b.group||'', location:b.location||'' };
+      });
+      changed++;
+    }
+  });
+  if(changed) saveArr(BD_KEY, arr);
+  return changed;
+}
+
+function startLivePolling(){
+  pullFromSheet(true);
+  retryPending();
+  setInterval(function(){ pullFromSheet(true); retryPending(); }, POLL_MS);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState==='visible'){ pullFromSheet(true); retryPending(); }
+  });
+  window.addEventListener('focus', function(){ pullFromSheet(true); retryPending(); });
+  window.addEventListener('online', function(){ pullFromSheet(true); retryPending(); });
+}
+
+// ── DAILY REPORT ─────────────────────────────────────────────────────
+function findBDForDate(date){
+  var arr = loadArr(BD_KEY).filter(function(e){ return e.date===date; });
+  if(!arr.length) return null;
+  arr.sort(function(a,b){ return (a.id>b.id)?1:-1; });
+  return arr[arr.length-1]; // most recently saved entry for that date
+}
+function findGeckoForDate(date){
+  var arr = loadArr(GECKO_KEY).filter(function(e){ return e.date===date; });
+  if(!arr.length) return null;
+  arr.sort(function(a,b){ return (a.id>b.id)?1:-1; });
+  return arr[arr.length-1];
+}
+
+function renderReport(){
+  var date = document.getElementById('report-date').value || todayStr();
+  if(!document.getElementById('report-date').value) document.getElementById('report-date').value = date;
+  var body = document.getElementById('report-body');
+
+  var bd = findBDForDate(date);
+  var gecko = findGeckoForDate(date);
+
+  var html = '';
+
+  // ── BD section (first, per request) ──
+  html += '<div class="rep-species-title">🐉 BD — Bearded Dragon <span class="badge">species #1</span></div>';
+  if(!bd){
+    html += '<div class="card"><div class="rep-empty">No BD entry logged for this date yet.</div></div>';
+  } else {
+    var totalEggs = num(bd.goodEggs)+num(bd.badEggs);
+    var totalHatch = num(bd.totalHatched);
+    var totalBoxes = BD_BOX_FIELDS.reduce(function(s,f){return s+num(bd[f]);},0);
+    html += '<div class="rep-cards">'+
+      repCard(totalEggs,'TOTAL EGGS')+
+      repCard(num(bd.goodEggs),'GOOD EGGS')+
+      repCard(totalBoxes,'TOTAL BOXES')+
+      repCard(totalHatch,'HATCHLINGS')+
+    '</div>';
+    html += '<div class="card">'+
+      '<div class="rep-row rep-row-head">🥚 EGGS — UC vs SPECIAL MORPH</div>'+
+      repRow('UC — Egg boxes / Good / Bad', num(bd.ucEggBoxes)+' / '+num(bd.goodEggsUC)+' / '+num(bd.badEggsUC))+
+      repRow('Special Morph — Egg boxes / Good / Bad', num(bd.specialEggBoxes)+' / '+num(bd.goodEggsSpecial)+' / '+num(bd.badEggsSpecial))+
+      repRow('Total good eggs / Total bad eggs', num(bd.goodEggs)+' / '+num(bd.badEggs))+
+      repRow('Dud boxes / Dud eggs', num(bd.dudBoxes)+' / '+num(bd.dudEggs))+
+      repRow('Total boxes collected (UC + Special + Dud)', totalBoxes)+
+      repBoxTable(bd.boxes)+
+      '<div class="rep-row rep-row-head" style="margin-top:8px">🐣 HATCHLINGS — UC vs SPECIAL MORPH</div>'+
+      repRow('UC hatchlings', num(bd.ucHatchlings))+
+      repRow('Special Morph hatchlings', num(bd.specialHatchlings))+
+      repRow('Total hatched (UC + Special)', totalHatch)+
+      (bd.employee ? repRow('Logged by', esc(bd.employee)) : '')+
+    '</div>';
+  }
+
+  // ── Gecko section ──
+  html += '<div class="rep-species-title">🦎 Gecko Species</div>';
+  if(!gecko){
+    html += '<div class="card"><div class="rep-empty">No gecko entry logged for this date yet.</div></div>';
+  } else {
+    var eggTotal=0, hatchTotal=0;
+    GECKO_SPECIES.forEach(function(s){ eggTotal += num(gecko.eggs && gecko.eggs[s.code]); });
+    GECKO_HATCH_SPECIES.forEach(function(s){ hatchTotal += num(gecko.hatch && gecko.hatch[s.code]); });
+    html += '<div class="rep-cards">'+
+      repCard(eggTotal,'TOTAL EGGS (ALL SPECIES)')+
+      repCard(hatchTotal,'TOTAL HATCHED (ALL SPECIES)')+
+    '</div>';
+    html += '<div class="card">';
+    html += '<div class="rep-row rep-row-head"><span class="rep-col-name">Species</span><span class="rep-col-num">Eggs</span><span class="rep-col-num">Hatched</span></div>';
+    GECKO_HATCH_SPECIES.forEach(function(s){
+      var eggs = gecko.eggs ? num(gecko.eggs[s.code]) : null;
+      var hatch = num(gecko.hatch && gecko.hatch[s.code]);
+      var eggsDisplay = (GECKO_SPECIES.some(function(x){return x.code===s.code;})) ? (gecko.eggs?num(gecko.eggs[s.code]):0) : '—';
+      html += '<div class="rep-row"><span class="rep-col-name">'+s.code+' <span style="color:var(--fb-muted);font-weight:400;font-size:11px">'+esc(s.label)+'</span></span><span class="rep-col-num">'+eggsDisplay+'</span><span class="rep-col-num">'+hatch+'</span></div>';
+    });
+    html += '</div>';
+    if(gecko.employee) html += '<div class="card">'+repRow('Logged by', esc(gecko.employee))+'</div>';
+  }
+
+  body.innerHTML = html;
+}
+
+function repBoxTable(boxes){
+  if(!boxes || !boxes.length) return '';
+  var rows = boxes.map(function(b){
+    var eggs = b.type==='Dud' ? num(b.dud)+' dud' : num(b.good)+' / '+num(b.bad);
+    var par = function(id,m){ return (id||m) ? esc(id||'—')+(m?' <span style="color:var(--fb-muted)">'+esc(m)+'</span>':'') : '—'; };
+    return '<tr><td><b>'+b.boxNo+'</b></td><td>'+esc(b.type)+'</td><td>'+eggs+'</td><td>♂ '+par(b.maleId,b.maleMorph)+'</td><td>♀ '+par(b.femaleId,b.femaleMorph)+'</td><td>'+esc(b.group||'—')+'</td><td>'+esc(b.location||'—')+'</td></tr>';
+  }).join('');
+  return '<div class="rep-row rep-row-head" style="margin-top:8px">📦 BOXES ('+boxes.length+') — ဥသေတ္တာများ</div>'+
+    '<div class="hist-table-wrap"><table class="rep-box-table"><thead><tr><th>#</th><th>Type</th><th>Good / Bad</th><th>Male</th><th>Female</th><th>Group</th><th>Location</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+function repCard(val,label){
+  return '<div class="rep-card"><div class="rep-card-val">'+val+'</div><div class="rep-card-label">'+label+'</div></div>';
+}
+function repRow(label,val){
+  return '<div class="rep-row"><span class="rep-col-name">'+label+'</span><span class="rep-col-num">'+val+'</span></div>';
+}
+
+// ── STATS ────────────────────────────────────────────────────────────
+var BD_STATS_METRICS = {
+  eggs:    { label:'Total Eggs',       labelMy:'ဥစုစုပေါင်း',       color:'#1877f2', icon:'🥚' },
+  boxes:   { label:'Total Boxes',      labelMy:'ဥသေတ္တာစုစုပေါင်း', color:'#0c447c', icon:'📦' },
+  hatch:   { label:'Hatchlings',       labelMy:'ကလေးထွက်ရေ',       color:'#42b72a', icon:'🐣' }
+};
+var GECKO_STATS_METRICS = {
+  eggs:  { label:'Total Eggs (all species)',       labelMy:'ဥစုစုပေါင်း',    color:'#1877f2', icon:'🥚' },
+  hatch: { label:'Total Hatchlings (all species)', labelMy:'ကလေးထွက်ရေ',    color:'#42b72a', icon:'🐣' }
+};
+var currentStatsSpecies = 'bd';
+var currentStatsMetric = 'eggs';
+var currentStatsRange = 7;
+
+function statsMetricsFor(species){ return species==='gecko' ? GECKO_STATS_METRICS : BD_STATS_METRICS; }
+
+function setStatsSpecies(sp){
+  currentStatsSpecies = sp;
+  document.getElementById('statstab-bd').classList.toggle('active', sp==='bd');
+  document.getElementById('statstab-gecko').classList.toggle('active', sp==='gecko');
+  var metrics = statsMetricsFor(sp);
+  if(!metrics[currentStatsMetric]) currentStatsMetric = Object.keys(metrics)[0];
+  buildStatsMetricRow();
+  renderStats();
+}
+
+function buildStatsMetricRow(){
+  var metrics = statsMetricsFor(currentStatsSpecies);
+  var html = Object.keys(metrics).map(function(key){
+    var m = metrics[key];
+    return '<button class="stat-metric-btn'+(key===currentStatsMetric?' active':'')+'" data-metric="'+key+'" onclick="setStatsMetric(\''+key+'\')">'+m.icon+' '+m.label.split(' (')[0]+'</button>';
+  }).join('');
+  document.getElementById('stats-metric-row').innerHTML = html;
+}
+
+function setStatsMetric(m){
+  currentStatsMetric = m;
+  document.querySelectorAll('#stats-metric-row .stat-metric-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-metric')===m);
+  });
+  renderStats();
+}
+function setStatsRange(r){
+  currentStatsRange = r;
+  document.querySelectorAll('#stats-range-row .stat-range-btn').forEach(function(b){
+    b.classList.toggle('active', Number(b.getAttribute('data-range'))===r);
+  });
+  renderStats();
+}
+
+// Value for one metric on one BD entry (the day's most-recently-saved entry)
+function metricValueFromBD(bd, metric){
+  if(!bd) return 0;
+  if(metric==='eggs')   return num(bd.goodEggs) + num(bd.badEggs);
+  if(metric==='boxes')  return BD_BOX_FIELDS.reduce(function(s,f){ return s+num(bd[f]); },0);
+  if(metric==='hatch')  return num(bd.totalHatched);
+  return 0;
+}
+
+// Value for one metric on one Gecko entry — sums across every tracked
+// species for that day (eggs uses GECKO_SPECIES, hatch uses the wider
+// GECKO_HATCH_SPECIES list which also includes Iguana/BWT/Red Tegu)
+function metricValueFromGecko(g, metric){
+  if(!g) return 0;
+  if(metric==='eggs'){
+    return GECKO_SPECIES.reduce(function(s,sp){ return s + num(g.eggs && g.eggs[sp.code]); },0);
+  }
+  if(metric==='hatch'){
+    return GECKO_HATCH_SPECIES.reduce(function(s,sp){ return s + num(g.hatch && g.hatch[sp.code]); },0);
+  }
+  return 0;
+}
+
+function metricValueForDate(dateStr, metric, species){
+  if(species==='gecko') return metricValueFromGecko(findGeckoForDate(dateStr), metric);
+  return metricValueFromBD(findBDForDate(dateStr), metric);
+}
+
+// Builds a { dates:[...], values:[...] } series for the last `days` days
+// (including today), using the same "last saved entry per date" logic as
+// the Daily Report, for the currently selected species+metric.
+function buildStatsSeries(species, metric, days){
+  var end = new Date();
+  end.setHours(0,0,0,0);
+  var dates = [], values = [];
+  for(var i=days-1; i>=0; i--){
+    var d = new Date(end);
+    d.setDate(d.getDate()-i);
+    var dateStr = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+    dates.push(dateStr);
+    values.push(metricValueForDate(dateStr, metric, species));
+  }
+  return { dates:dates, values:values };
+}
+
+function renderStats(){
+  if(!document.getElementById('stats-metric-row').children.length) buildStatsMetricRow();
+  document.querySelectorAll('#stats-range-row .stat-range-btn').forEach(function(b){
+    b.classList.toggle('active', Number(b.getAttribute('data-range'))===currentStatsRange);
+  });
+
+  var metrics = statsMetricsFor(currentStatsSpecies);
+  var meta = metrics[currentStatsMetric] || metrics[Object.keys(metrics)[0]];
+  var series = buildStatsSeries(currentStatsSpecies, currentStatsMetric, currentStatsRange);
+
+  var todayStrVal = todayStr();
+  var yestD = new Date(); yestD.setDate(yestD.getDate()-1);
+  var yestStr = yestD.getFullYear()+'-'+pad(yestD.getMonth()+1)+'-'+pad(yestD.getDate());
+  var todayVal = metricValueForDate(todayStrVal, currentStatsMetric, currentStatsSpecies);
+  var yestVal = metricValueForDate(yestStr, currentStatsMetric, currentStatsSpecies);
+  var rangeTotal = series.values.reduce(function(s,v){ return s+v; },0);
+
+  document.getElementById('stats-cards').innerHTML =
+    '<div class="stat-card"><div class="num" style="color:'+meta.color+'">'+yestVal+'</div><div class="lbl">Yesterday<span class="lbl-my my">မနေ့က</span></div></div>'+
+    '<div class="stat-card"><div class="num" style="color:'+meta.color+'">'+todayVal+'</div><div class="lbl">Today<span class="lbl-my my">ယနေ့</span></div></div>'+
+    '<div class="stat-card"><div class="num" style="color:'+meta.color+'">'+rangeTotal+'</div><div class="lbl">Total ('+currentStatsRange+'d)<span class="lbl-my my">စုစုပေါင်း</span></div></div>';
+
+  var speciesLabel = currentStatsSpecies==='gecko' ? 'GECKO' : 'BD';
+  document.getElementById('stats-chart-title').textContent = (speciesLabel+' — '+meta.label+' Over Time — '+rangeLabel(currentStatsRange)).toUpperCase();
+  document.getElementById('stats-chart-title-my').textContent = meta.labelMy;
+  document.getElementById('stats-chart-wrap').innerHTML = lineChartSVG(series.dates, series.values, meta.color);
+  renderComboChart();
+}
+
+function rangeLabel(days){
+  if(days===7) return '7 Days';
+  if(days===30) return '30 Days';
+  if(days===182) return '6 Months';
+  if(days===365) return '1 Year';
+  return days+' Days';
+}
+
+// Builds a smoothed SVG path (Catmull-Rom → cubic Bézier) through a set of
+// {x,y} points, so a line chart curves gently between data points instead
+// of zig-zagging point-to-point. The data itself is untouched — only how
+// the line is drawn between the real values changes; the dots still mark
+// the actual point for each day.
+function smoothPathD(points){
+  if(!points.length) return '';
+  if(points.length===1) return 'M'+points[0].x+','+points[0].y;
+  if(points.length===2) return 'M'+points[0].x+','+points[0].y+' L'+points[1].x+','+points[1].y;
+  var d = 'M'+points[0].x+','+points[0].y;
+  for(var i=0;i<points.length-1;i++){
+    var p0 = points[i-1] || points[i];
+    var p1 = points[i];
+    var p2 = points[i+1];
+    var p3 = points[i+2] || p2;
+    var cp1x = p1.x + (p2.x - p0.x)/6;
+    var cp1y = p1.y + (p2.y - p0.y)/6;
+    var cp2x = p2.x - (p3.x - p1.x)/6;
+    var cp2y = p2.y - (p3.y - p1.y)/6;
+    d += ' C '+cp1x+','+cp1y+' '+cp2x+','+cp2y+' '+p2.x+','+p2.y;
+  }
+  return d;
+}
+
+// Self-contained SVG line+area chart. `dates` are 'YYYY-MM-DD' strings,
+// `values` are numbers of equal length. Renders x-axis tick labels sampled
+// down to a readable count regardless of range length.
+function lineChartSVG(dates, values, color){
+  var W = 680, H = 220, padL = 34, padR = 12, padT = 14, padB = 26;
+  var innerW = W - padL - padR, innerH = H - padT - padB;
+  var maxV = Math.max.apply(null, values.concat([1]));
+  // round the axis max up to a "nice" number
+  var niceMax = maxV <= 5 ? 5 : Math.ceil(maxV/5)*5;
+  var n = values.length;
+
+  function xFor(i){ return n<=1 ? padL : padL + (innerW * i/(n-1)); }
+  function yFor(v){ return padT + innerH - (innerH * (v/niceMax)); }
+
+  var pts = values.map(function(v,i){ return {x:xFor(i), y:yFor(v)}; });
+  var pathD = smoothPathD(pts);
+  var areaD = pathD + ' L'+xFor(n-1)+','+(padT+innerH) + ' L'+xFor(0)+','+(padT+innerH) + ' Z';
+
+  // Y-axis labels: 0, mid, max
+  var yLabels = [0, Math.round(niceMax/2), niceMax];
+
+  // X-axis labels: sample down to ~6 ticks max, always include first & last
+  var maxTicks = 6;
+  var step = Math.max(1, Math.ceil(n/maxTicks));
+  var tickIdx = [];
+  for(var i=0; i<n; i+=step) tickIdx.push(i);
+  if(tickIdx[tickIdx.length-1] !== n-1) tickIdx.push(n-1);
+
+  function fmtTick(dateStr, rangeLen){
+    var parts = dateStr.split('-');
+    var d = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+    if(rangeLen<=30) return d.toLocaleDateString('en-GB',{weekday:'short'}).slice(0,3);
+    return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+  }
+
+  var dots = values.map(function(v,i){
+    return '<circle cx="'+xFor(i)+'" cy="'+yFor(v)+'" r="3" fill="'+color+'"></circle>';
+  }).join('');
+
+  var yGrid = yLabels.map(function(lv){
+    var y = yFor(lv);
+    return '<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#eee" stroke-width="1"></line>'+
+      '<text x="'+(padL-8)+'" y="'+(y+4)+'" font-size="11" fill="#65676b" text-anchor="end" font-family="Inter,sans-serif">'+lv+'</text>';
+  }).join('');
+
+  var xLabels = tickIdx.map(function(i){
+    return '<text x="'+xFor(i)+'" y="'+(H-6)+'" font-size="11" fill="#65676b" text-anchor="middle" font-family="Inter,sans-serif">'+esc(fmtTick(dates[i], n))+'</text>';
+  }).join('');
+
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;min-width:320px" xmlns="http://www.w3.org/2000/svg">'+
+    yGrid +
+    '<path d="'+areaD+'" fill="'+color+'" fill-opacity="0.12" stroke="none"></path>'+
+    '<path d="'+pathD+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>'+
+    dots +
+    xLabels +
+    '</svg>';
+}
+
+// Multi-line variant of lineChartSVG — `series` is [{label, color, values}, ...]
+// all sharing the same `dates` x-axis and a single shared y-scale so the
+// lines are directly comparable (e.g. eggs vs. sick counts on the same day).
+function multiLineChartSVG(dates, series){
+  var W = 680, H = 240, padL = 34, padR = 12, padT = 14, padB = 26;
+  var innerW = W - padL - padR, innerH = H - padT - padB;
+  var allValues = series.reduce(function(acc,s){ return acc.concat(s.values); }, [0]);
+  var maxV = Math.max.apply(null, allValues.concat([1]));
+  var niceMax = maxV <= 5 ? 5 : Math.ceil(maxV/5)*5;
+  var n = dates.length;
+
+  function xFor(i){ return n<=1 ? padL : padL + (innerW * i/(n-1)); }
+  function yFor(v){ return padT + innerH - (innerH * (v/niceMax)); }
+
+  var yLabels = [0, Math.round(niceMax/2), niceMax];
+  var yGrid = yLabels.map(function(lv){
+    var y = yFor(lv);
+    return '<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="#eee" stroke-width="1"></line>'+
+      '<text x="'+(padL-8)+'" y="'+(y+4)+'" font-size="11" fill="#65676b" text-anchor="end" font-family="Inter,sans-serif">'+lv+'</text>';
+  }).join('');
+
+  var maxTicks = 6;
+  var step = Math.max(1, Math.ceil(n/maxTicks));
+  var tickIdx = [];
+  for(var i=0; i<n; i+=step) tickIdx.push(i);
+  if(tickIdx[tickIdx.length-1] !== n-1) tickIdx.push(n-1);
+
+  function fmtTick(dateStr, rangeLen){
+    var parts = dateStr.split('-');
+    var d = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+    if(rangeLen<=30) return d.toLocaleDateString('en-GB',{weekday:'short'}).slice(0,3);
+    return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+  }
+  var xLabels = tickIdx.map(function(i){
+    return '<text x="'+xFor(i)+'" y="'+(H-6)+'" font-size="11" fill="#65676b" text-anchor="middle" font-family="Inter,sans-serif">'+esc(fmtTick(dates[i], n))+'</text>';
+  }).join('');
+
+  var linesHtml = series.map(function(s){
+    var pts = s.values.map(function(v,i){ return {x:xFor(i), y:yFor(v)}; });
+    var pathD = smoothPathD(pts);
+    var dots = s.values.map(function(v,i){
+      return '<circle cx="'+xFor(i)+'" cy="'+yFor(v)+'" r="2.5" fill="'+s.color+'"></circle>';
+    }).join('');
+    return '<path d="'+pathD+'" fill="none" stroke="'+s.color+'" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"></path>'+dots;
+  }).join('');
+
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;min-width:320px" xmlns="http://www.w3.org/2000/svg">'+
+    yGrid + linesHtml + xLabels +
+    '</svg>';
+}
+
+// ── COMBINED EGGS/HATCH CHART (BD only) ────────────────
+var currentComboRange = 7;
+var COMBO_SERIES_DEF = [
+  { metric:'eggs',    label:'Eggs Collected', labelMy:'ဥစုဆောင်း',    color:'#1877f2' },
+  { metric:'hatch',   label:'Hatched',        labelMy:'ကလေးထွက်',     color:'#42b72a' }
+];
+function setComboRange(r){
+  currentComboRange = r;
+  document.querySelectorAll('#combo-range-row .stat-range-btn').forEach(function(b){
+    b.classList.toggle('active', Number(b.getAttribute('data-range'))===r);
+  });
+  renderComboChart();
+}
+function renderComboChart(){
+  var wrap = document.getElementById('combo-chart-wrap');
+  if(!wrap) return; // page not built yet
+  var end = new Date(); end.setHours(0,0,0,0);
+  var days = currentComboRange;
+  var dates = [];
+  for(var i=days-1; i>=0; i--){
+    var d = new Date(end); d.setDate(d.getDate()-i);
+    dates.push(d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()));
+  }
+  var series = COMBO_SERIES_DEF.map(function(def){
+    return {
+      label: def.label, color: def.color,
+      values: dates.map(function(dateStr){ return metricValueForDate(dateStr, def.metric, 'bd'); })
+    };
+  });
+  wrap.innerHTML = multiLineChartSVG(dates, series);
+  var legendEl = document.getElementById('combo-legend');
+  if(legendEl){
+    legendEl.innerHTML = COMBO_SERIES_DEF.map(function(def){
+      return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#65676b;">'+
+        '<span style="width:10px;height:10px;border-radius:50%;background:'+def.color+';display:inline-block;"></span>'+
+        def.label+' <span class="my" style="font-size:10.5px;">'+def.labelMy+'</span></span>';
+    }).join('');
+  }
+}
+
+// ── HISTORY ──────────────────────────────────────────────────────────
+function renderHistory(){
+  var wrap = document.getElementById('history-wrap');
+  if(currentHistSpecies==='bd'){
+    var arr = loadArr(BD_KEY).slice().sort(function(a,b){ return b.date.localeCompare(a.date); });
+    if(!arr.length){ wrap.innerHTML='<div class="rep-empty">No BD entries yet.</div>'; return; }
+    var html = '<table class="hist-table"><thead><tr><th>Date</th><th>UC Boxes</th><th>Special Boxes</th><th>Dud Boxes</th><th>Total Boxes</th><th>UC Good</th><th>UC Bad</th><th>Spec Good</th><th>Spec Bad</th><th>UC Hatch</th><th>Spec Hatch</th><th>Total Hatch</th><th>Box Cards</th><th>By</th></tr></thead><tbody>';
+    arr.forEach(function(e){
+      var totalBoxes = BD_BOX_FIELDS.reduce(function(s,f){return s+num(e[f]);},0);
+      html += '<tr><td>'+esc(e.date)+'</td><td>'+num(e.ucEggBoxes)+'</td><td>'+num(e.specialEggBoxes)+'</td><td>'+num(e.dudBoxes)+'</td><td>'+totalBoxes+'</td><td>'+num(e.goodEggsUC)+'</td><td>'+num(e.badEggsUC)+'</td><td>'+num(e.goodEggsSpecial)+'</td><td>'+num(e.badEggsSpecial)+'</td><td>'+num(e.ucHatchlings)+'</td><td>'+num(e.specialHatchlings)+'</td><td>'+num(e.totalHatched)+'</td><td>'+((e.boxes&&e.boxes.length)?e.boxes.length:'—')+'</td><td>'+esc(e.employee)+'</td></tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  } else {
+    var arr2 = loadArr(GECKO_KEY).slice().sort(function(a,b){ return b.date.localeCompare(a.date); });
+    if(!arr2.length){ wrap.innerHTML='<div class="rep-empty">No gecko entries yet.</div>'; return; }
+    var headCols = GECKO_HATCH_SPECIES.map(function(s){ return '<th>'+s.code+' hatch</th>'; }).join('');
+    var eggCols = GECKO_SPECIES.map(function(s){ return '<th>'+s.code+' eggs</th>'; }).join('');
+    var html2 = '<table class="hist-table"><thead><tr><th>Date</th>'+eggCols+headCols+'<th>By</th></tr></thead><tbody>';
+    arr2.forEach(function(e){
+      var eggTds = GECKO_SPECIES.map(function(s){ return '<td>'+(e.eggs?num(e.eggs[s.code]):0)+'</td>'; }).join('');
+      var hatchTds = GECKO_HATCH_SPECIES.map(function(s){ return '<td>'+(e.hatch?num(e.hatch[s.code]):0)+'</td>'; }).join('');
+      html2 += '<tr><td>'+esc(e.date)+'</td>'+eggTds+hatchTds+'<td>'+esc(e.employee)+'</td></tr>';
+    });
+    html2 += '</tbody></table>';
+    wrap.innerHTML = html2;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PRODUCTION — merged Egg Production Report (BD)
+// Historical monthly figures (2024 – May 2026) are kept exactly as in the
+// report. Any month the report has no figure for is filled in live by
+// adding up the BD Daily Entries (one entry per date — the most recently
+// saved one, same rule as the Daily Report). Froze only exists in the
+// historical report (the daily form has no freeze field).
+// ═══════════════════════════════════════════════════════════════
+var PD_M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var PD_HIST = {
+  hatched: {
+    2024:[10188,19433,21735,8822,4578,5706,4077,2650,1912,1174,374,96],
+    2025:[5325,12402,4166,5357,6172,1967,1382,1239,1127,1527,3028,3198],
+    2026:[3589,10389,11505,null,null,null,null,null,null,null,null,null]
+  },
+  good: {
+    2024:[12314,29674,32233,21008,9029,11296,7493,4000,3000,2000,1000,528],
+    2025:[7676,18246,27749,22000,12984,5654,2020,1737,1910,2169,4223,4549],
+    2026:[5256,14182,16787,9528,6437,null,null,null,null,null,null,null]
+  },
+  bad: {
+    2024:[8691,17299,6000,5914,4700,4500,2655,1434,1086,690,228,72],
+    2025:[2545,10135,10947,5397,6709,4125,2219,553,459,752,578,1387],
+    2026:[1304,2915,5389,3263,740,null,null,null,null,null,null,null]
+  },
+  froze: {
+    2024:[0,0,14000,10000,10000,8000,0,0,0,0,0,0],
+    2025:[0,0,20217,11656,1000,0,0,0,0,0,0,0],
+    2026:[0,0,0,0,0,null,null,null,null,null,null,null]
+  },
+  boxes: {
+    2024:[914,1966,2345,1847,1117,1072,389,230,176,109,58,38],
+    2025:[402,1147,1764,1179,860,341,225,111,35,142,236,277],
+    2026:[311,847,1140,669,405,null,null,null,null,null,null,null]
+  }
+};
+var PD_METRICS = ['hatched','good','bad','froze','boxes'];
+var PD_YEAR_COLORS = {2024:'#f7c948',2025:'#42b72a',2026:'#1877f2',2027:'#8e44ad',2028:'#e67e22',2029:'#17a2b8',2030:'#fa3e3e'};
+var PD_YEAR_TEXT = {2024:'#856404',2025:'#1a5c0c',2026:'#1877f2',2027:'#8e44ad',2028:'#b35900',2029:'#0f7285',2030:'#c0262b'};
+function pdColor(y){ return PD_YEAR_COLORS[y] || '#65676b'; }
+function pdText(y){ return PD_YEAR_TEXT[y] || '#050505'; }
+
+var pdSub = 'overview';
+var PD_CHARTS = [];
+var PD = null; // computed data
+
+// Live monthly sums from the BD daily entries (last saved entry per date)
+function pdLiveMonthly(){
+  var byDate = {};
+  loadArr(BD_KEY).forEach(function(e){
+    if(!e || !e.date) return;
+    var cur = byDate[e.date];
+    if(!cur || String(e.id) > String(cur.id)) byDate[e.date] = e;
+  });
+  var live = {}; // live[year][monthIdx] = {good,bad,hatched,boxes,days}
+  Object.keys(byDate).forEach(function(date){
+    var p = String(date).split('-'); if(p.length<3) return;
+    var y = parseInt(p[0],10), m = parseInt(p[1],10)-1;
+    if(isNaN(y) || isNaN(m) || m<0 || m>11) return;
+    var e = byDate[date];
+    live[y] = live[y] || {};
+    var c = live[y][m] = live[y][m] || {good:0,bad:0,hatched:0,boxes:0,days:0};
+    var goodV = (e.goodEggs!==undefined && e.goodEggs!=='') ? num(e.goodEggs) : num(e.goodEggsUC)+num(e.goodEggsSpecial);
+    var badV  = (e.badEggs!==undefined && e.badEggs!=='')   ? num(e.badEggs)  : num(e.badEggsUC)+num(e.badEggsSpecial);
+    var hatV  = (e.totalHatched!==undefined && e.totalHatched!=='') ? num(e.totalHatched) : num(e.ucHatchlings)+num(e.specialHatchlings);
+    c.good += goodV; c.bad += badV; c.hatched += hatV;
+    c.boxes += BD_BOX_FIELDS.reduce(function(s,f){ return s+num(e[f]); },0);
+    c.days++;
+  });
+  return live;
+}
+
+function pdCompute(){
+  var live = pdLiveMonthly();
+  var nowY = new Date().getFullYear();
+  var yrs = {2024:1,2025:1,2026:1};
+  Object.keys(live).forEach(function(y){ if(+y>=2024) yrs[y]=1; });
+  if(nowY>=2024) yrs[nowY]=1;
+  var years = Object.keys(yrs).map(Number).sort();
+  var D = {}, LIVE = {};
+  PD_METRICS.forEach(function(k){ D[k] = {}; });
+  years.forEach(function(y){
+    LIVE[y] = [];
+    PD_METRICS.forEach(function(k){
+      D[k][y] = PD_M.map(function(_,m){
+        var h = PD_HIST[k][y] ? PD_HIST[k][y][m] : null;
+        if(h!==null && h!==undefined) return h;
+        if(k==='froze') return null;
+        var l = live[y] && live[y][m];
+        if(l){ LIVE[y][m] = true; return l[k]; }
+        return null;
+      });
+    });
+  });
+  // mark live per metric too (for table underline)
+  var LIVEK = {};
+  PD_METRICS.forEach(function(k){
+    LIVEK[k] = {};
+    years.forEach(function(y){
+      LIVEK[k][y] = PD_M.map(function(_,m){
+        var h = PD_HIST[k][y] ? PD_HIST[k][y][m] : null;
+        return (h===null || h===undefined) && D[k][y][m]!==null && k!=='froze';
+      });
+    });
+  });
+  var T = {};
+  PD_METRICS.forEach(function(k){
+    T[k] = {};
+    years.forEach(function(y){ T[k][y] = D[k][y].reduce(function(s,v){ return s+(v||0); },0); });
+  });
+  // last month with any data (for "Jan–Sep YTD" labels)
+  var lastM = {};
+  years.forEach(function(y){
+    lastM[y] = -1;
+    for(var m=0;m<12;m++){ if(['good','bad','hatched','boxes'].some(function(k){ return D[k][y][m]!==null; })) lastM[y]=m; }
+  });
+  return { years:years, D:D, T:T, LIVEK:LIVEK, lastM:lastM, nowY:nowY, anyLive:Object.keys(live).length>0 };
+}
+
+function pdFmt(v){ return (v===null||v===undefined) ? '—' : Number(v).toLocaleString('en-US'); }
+function pdPct(a,b){ return (a===null||b===null||!b) ? null : Math.round(a/b*1000)/10; }
+function pdYearLabel(y){
+  if(y < PD.nowY && PD.lastM[y]===11) return 'FULL YEAR';
+  if(PD.lastM[y] < 0) return 'NO DATA YET';
+  return (PD.lastM[y]===0 ? 'JAN' : 'JAN–'+PD_M[PD.lastM[y]].toUpperCase()) + (y>=PD.nowY ? ' YTD' : '');
+}
+
+// ── chart helpers ──
+function pdDestroyCharts(){ PD_CHARTS.forEach(function(c){ try{ c.destroy(); }catch(e){} }); PD_CHARTS = []; }
+function pdChart(id, cfg){
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(typeof Chart==='undefined'){
+    el.parentNode.innerHTML = '<div class="pd-nochart">Charts need an internet connection to load.<br><span class="my">ဂရပ်များအတွက် အင်တာနက် လိုအပ်ပါသည်</span></div>';
+    return;
+  }
+  PD_CHARTS.push(new Chart(el, cfg));
+}
+var PD_TIP = {backgroundColor:'#fff',borderColor:'#dde1e7',borderWidth:1,titleColor:'#050505',bodyColor:'#65676b',padding:10};
+function pdScaleY(){ return {grid:{color:'#f0f2f5'},beginAtZero:true,ticks:{color:'#65676b',callback:function(v){ return v>=1000 ? (v/1000)+'k' : v; }}}; }
+function pdScaleX(){ return {grid:{display:false},ticks:{color:'#65676b',maxRotation:0,autoSkip:true}}; }
+function pdScalePct(max){ return {grid:{color:'#f0f2f5'},min:0,max:max||100,ticks:{color:'#65676b',callback:function(v){ return v+'%'; }}}; }
+function pdLegend(){ return {display:true,position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:11}}}; }
+function pdLineDs(label, data, color, dashed){
+  return {label:label,data:data,borderColor:color,backgroundColor:color+'22',borderWidth:2,borderDash:dashed?[5,4]:[],
+    pointBackgroundColor:color,pointRadius:3,pointHoverRadius:5,fill:false,tension:0.35,spanGaps:false};
+}
+function pdOpts(extra){
+  var o = {responsive:true,maintainAspectRatio:false,plugins:{legend:pdLegend(),tooltip:PD_TIP},scales:{x:pdScaleX(),y:pdScaleY()}};
+  if(extra) Object.keys(extra).forEach(function(k){ o[k]=extra[k]; });
+  return o;
+}
+function pdGoodRateSeries(y){
+  return PD_M.map(function(_,m){
+    var g = PD.D.good[y][m], b = PD.D.bad[y][m];
+    if(g===null) return null;
+    return pdPct(g, g+(b||0));
+  });
+}
+
+// ── sub-tabs ──
+function setProdSub(sub){
+  pdSub = sub;
+  document.querySelectorAll('#pd-subtabs .species-btn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-sub')===sub); });
+  ['overview','ratios','monthly','boxes'].forEach(function(s){ document.getElementById('pd-'+s).style.display = s===sub ? 'block' : 'none'; });
+  renderProduction();
+}
+
+function renderProduction(){
+  PD = pdCompute();
+  pdDestroyCharts();
+  if(pdSub==='overview') pdOverview();
+  if(pdSub==='ratios') pdRatios();
+  if(pdSub==='monthly') pdMonthly();
+  if(pdSub==='boxes') pdBoxes();
+}
+
+// ── OVERVIEW ──
+function pdOverview(){
+  var Y = PD.years, T = PD.T;
+  document.getElementById('pd-hero').innerHTML = Y.map(function(y){
+    var g=T.good[y], b=T.bad[y], f=T.froze[y], tot=g+b;
+    var gp = pdPct(g,tot), bp = pdPct(b,tot), fp = pdPct(f,tot);
+    var row = function(k,v,cls,pill,pc){ return '<div class="pd-yr-row"><span class="pd-yr-key">'+k+'</span><span class="pd-yr-val'+(cls?' '+cls:'')+'">'+v+'</span>'+(pill?'<span class="pd-pill '+pc+'">'+pill+'</span>':'')+'</div>'; };
+    return '<div class="pd-ycard"><div class="pd-ycard-top">'+
+        '<div class="pd-ycard-yr" style="color:'+pdText(y)+'">● '+y+' — '+pdYearLabel(y)+'</div>'+
+        '<div class="pd-ycard-big" style="color:'+pdText(y)+'">'+pdFmt(g)+'</div><div class="pd-ycard-lbl">Total Good Eggs · <span class="my">ကောင်းသောဥ စုစုပေါင်း</span></div></div>'+
+      '<div class="pd-ycard-rows">'+
+        row('🐣 Hatched', pdFmt(T.hatched[y]))+
+        row('✅ Good Eggs', '<span style="color:#1a5c0c">'+pdFmt(g)+'</span>', '', gp!==null?gp+'%':'', 'pd-good')+
+        row('❌ Bad Eggs', '<span style="color:var(--red)">'+pdFmt(b)+'</span>', '', bp!==null?bp+'%':'', 'pd-bad')+
+        row('❄️ Froze', '<span style="color:var(--fb-blue)">'+pdFmt(f)+'</span>', '', fp!==null?fp+'%':'', 'pd-blue')+
+        row('📦 Boxes', pdFmt(T.boxes[y]))+
+      '</div><div class="pd-ybar" style="background:'+(tot?'linear-gradient(90deg,var(--green) '+gp+'%,var(--red) 0)':'var(--fb-bg)')+'"></div></div>';
+  }).join('');
+
+  // insights — all calculated from the data
+  var withEggs = Y.filter(function(y){ return T.good[y]+T.bad[y]>0; });
+  var co = [];
+  if(withEggs.length){
+    var rates = withEggs.map(function(y){ return {y:y, r:pdPct(T.good[y], T.good[y]+T.bad[y])}; });
+    var best = rates.reduce(function(a,b){ return b.r>a.r?b:a; });
+    var others = rates.filter(function(r){ return r.y!==best.y; });
+    var avgOthers = others.length ? others.reduce(function(s,r){ return s+r.r; },0)/others.length : null;
+    co.push({c:'var(--green)', l:'🏆 Best Good Rate', v:best.r+'%', vc:'#1a5c0c',
+      d:best.y+' has the highest good egg rate'+(avgOthers!==null?' — '+(Math.round((best.r-avgOthers)*10)/10)+' pts above the other years\' average':'')});
+  }
+  var cy = PD.nowY, py = Y.filter(function(y){ return y<cy; });
+  if(Y.indexOf(cy)>=0){
+    co.push({c:'var(--fb-blue)', l:'❄️ Freezes '+cy, v:pdFmt(T.froze[cy]), vc:'var(--fb-blue)',
+      d:'vs '+py.map(function(y){ return pdFmt(T.froze[y])+' in '+y; }).join(' and ')+(T.froze[cy]===0?' — none so far this year':'')});
+    var lm = PD.lastM[cy];
+    if(lm>=0 && Y.indexOf(2024)>=0){
+      // only compare months where this year actually has box figures
+      var ms = []; for(var m=0;m<=lm;m++){ if(PD.D.boxes[cy][m]!==null) ms.push(m); }
+      var sum = function(y){ return ms.reduce(function(s,m){ return s+(PD.D.boxes[y][m]||0); },0); };
+      var a = sum(cy), b = sum(2024);
+      var span = ms.length===lm+1 ? 'Jan–'+PD_M[lm] : ms.length+' months with data';
+      if(b>0 && ms.length) co.push({c:'var(--amber)', l:'📦 Boxes YTD vs 2024', v:(a>=b?'+':'−')+Math.abs(Math.round((a-b)/b*100))+'%', vc:'#856404',
+        d:cy+' ('+span+'): '+pdFmt(a)+' boxes vs '+pdFmt(b)+' in the same months of 2024'});
+    }
+  }
+  var bestMonth = function(k){
+    var best = null;
+    Y.forEach(function(y){ PD.D[k][y].forEach(function(v,m){ if(v!==null && (!best || v>best.v)) best={v:v,y:y,m:m}; }); });
+    return best;
+  };
+  var bh = bestMonth('hatched'); if(bh) co.push({c:'var(--red)', l:'🐣 Best Hatch Month', v:PD_M[bh.m]+' '+bh.y, vc:pdText(bh.y), d:pdFmt(bh.v)+' hatched — strongest single month on record'});
+  var bg = bestMonth('good');    if(bg) co.push({c:'var(--green)', l:'✅ Best Good Eggs Month', v:PD_M[bg.m]+' '+bg.y, vc:pdText(bg.y), d:pdFmt(bg.v)+' good eggs — highest single month on record'});
+  if(withEggs.length){
+    var vol = withEggs.reduce(function(a,y){ return (T.good[y]+T.bad[y]) > (T.good[a]+T.bad[a]) ? y : a; });
+    co.push({c:'var(--fb-blue)', l:'📊 Largest Volume Year', v:pdFmt(T.good[vol]+T.bad[vol]), vc:'var(--fb-blue)', d:vol+' — good + bad eggs combined'});
+  }
+  document.getElementById('pd-callouts').innerHTML = co.map(function(c){
+    return '<div class="pd-callout" style="border-left-color:'+c.c+'"><div class="pd-callout-lbl">'+c.l+'</div><div class="pd-callout-val" style="color:'+c.vc+'">'+c.v+'</div><div class="pd-callout-desc">'+c.d+'</div></div>';
+  }).join('');
+
+  var dash = function(y){ return y===2025; };
+  pdChart('pdGoodOverlay',{type:'line',data:{labels:PD_M,datasets:Y.map(function(y){ return pdLineDs(String(y), PD.D.good[y], pdColor(y), dash(y)); })},options:pdOpts()});
+  pdChart('pdBadOverlay',{type:'bar',data:{labels:PD_M,datasets:Y.map(function(y){ return {label:String(y),data:PD.D.bad[y],backgroundColor:pdColor(y)+'88',borderColor:pdColor(y),borderWidth:1}; })},options:pdOpts()});
+  pdChart('pdHatched',{type:'line',data:{labels:PD_M,datasets:Y.map(function(y){ return pdLineDs(String(y), PD.D.hatched[y], pdColor(y), dash(y)); })},options:pdOpts()});
+  pdChart('pdYearTotals',{type:'bar',data:{labels:['Hatched','Good','Bad','Froze','Boxes ×10'],datasets:Y.map(function(y){
+      return {label:String(y),data:[T.hatched[y],T.good[y],T.bad[y],T.froze[y],T.boxes[y]*10],backgroundColor:pdColor(y)+'99',borderColor:pdColor(y),borderWidth:1};
+    })},options:pdOpts({plugins:{legend:pdLegend(),tooltip:Object.assign({},PD_TIP,{callbacks:{label:function(ctx){ var v=ctx.raw; if(ctx.dataIndex===4) v=Math.round(v/10); return ctx.dataset.label+': '+pdFmt(v); }}})}})});
+  pdChart('pdGoodRate',{type:'line',data:{labels:PD_M,datasets:Y.map(function(y){ return pdLineDs(y+' Good%', pdGoodRateSeries(y), pdColor(y), dash(y)); })},
+    options:pdOpts({scales:{x:pdScaleX(),y:pdScalePct()},plugins:{legend:pdLegend(),tooltip:Object.assign({},PD_TIP,{callbacks:{label:function(ctx){ return ctx.dataset.label+': '+(ctx.raw!==null?ctx.raw+'%':'—'); }}})}})});
+}
+
+// ── RATIOS ──
+function pdRatios(){
+  var Y = PD.years, T = PD.T;
+  pdChart('pdRatioLine',{type:'line',data:{labels:PD_M,datasets:Y.map(function(y){ return pdLineDs('Good% '+y, pdGoodRateSeries(y), pdColor(y), y===2025); })},
+    options:pdOpts({scales:{x:pdScaleX(),y:pdScalePct()},plugins:{legend:pdLegend(),tooltip:Object.assign({},PD_TIP,{callbacks:{label:function(ctx){ return ctx.dataset.label+': '+(ctx.raw!==null?ctx.raw+'%':'—'); }}})}})});
+
+  document.getElementById('pd-pies').innerHTML = Y.map(function(y){
+    return '<div class="pd-card"><div class="pd-card-title">'+y+' — Egg Quality Split</div><div class="pd-card-sub">Good vs Bad · '+pdYearLabel(y).toLowerCase()+'</div><div class="pd-chart"><canvas id="pdPie'+y+'"></canvas></div></div>';
+  }).join('');
+  Y.forEach(function(y){
+    var g=T.good[y], b=T.bad[y];
+    if(!(g+b)){ document.getElementById('pdPie'+y).parentNode.innerHTML='<div class="pd-nochart">No egg data yet</div>'; return; }
+    pdChart('pdPie'+y,{type:'doughnut',data:{labels:['✅ Good ('+pdFmt(g)+')','❌ Bad ('+pdFmt(b)+')'],
+      datasets:[{data:[g,b],backgroundColor:['#42b72acc','#fa3e3ecc'],borderColor:['#42b72a','#fa3e3e'],borderWidth:2,hoverOffset:6}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,font:{size:11}}},
+        tooltip:Object.assign({},PD_TIP,{callbacks:{label:function(ctx){ return ctx.label.split(' ')[0]+' '+pdPct(ctx.raw,g+b)+'%'; }}}),
+        title:{display:true,text:pdPct(g,g+b)+'% good',color:'#050505',font:{size:12,weight:'700'}}}}});
+  });
+
+  var fr = Y.map(function(y){ var tot=T.good[y]+T.bad[y]+T.froze[y]; return tot ? Math.round(T.froze[y]/tot*1000)/10 : 0; });
+  pdChart('pdFreezeRate',{type:'bar',data:{labels:Y.map(function(y){ return y+(y>=PD.nowY?' YTD':''); }),
+    datasets:[{label:'Freeze %',data:fr,backgroundColor:Y.map(function(y){ return pdColor(y)+'99'; }),borderColor:Y.map(pdColor),borderWidth:2,borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},PD_TIP,{callbacks:{label:function(ctx){ return ctx.raw+'% of total eggs frozen'; }}})},
+      scales:{x:pdScaleX(),y:pdScalePct(Math.max(30, Math.ceil(Math.max.apply(null,fr)/10)*10))}}});
+
+  var pill = function(p, bad){ if(p===null) return '<td class="na">—</td>'; return '<td><span class="pd-pill '+(bad?'pd-bad':(p>=70?'pd-good':'pd-mid'))+'">'+p+'%</span></td>'; };
+  var html = '<thead><tr><th class="l">Month</th>'+Y.map(function(y){ return '<th style="color:'+pdText(y)+'">Good% '+y+'</th><th style="color:'+pdText(y)+'">Bad% '+y+'</th>'; }).join('')+'<th>Best Year</th></tr></thead><tbody>';
+  PD_M.forEach(function(mn,m){
+    var best=null;
+    html += '<tr><td class="l">'+mn+'</td>'+Y.map(function(y){
+      var g=PD.D.good[y][m], b=PD.D.bad[y][m];
+      var p = g===null ? null : pdPct(g, g+(b||0));
+      if(p!==null && (!best || p>best.p)) best={p:p,y:y};
+      return pill(p,false)+pill(p===null?null:Math.round((100-p)*10)/10,true);
+    }).join('')+'<td><strong style="color:'+(best?pdText(best.y):'')+'">'+(best?best.y:'—')+'</strong></td></tr>';
+  });
+  var bestT=null;
+  html += '<tr class="pd-total"><td class="l">TOTAL</td>'+Y.map(function(y){
+    var p = pdPct(T.good[y], T.good[y]+T.bad[y]);
+    if(p!==null && (!bestT || p>bestT.p)) bestT={p:p,y:y};
+    return pill(p,false)+pill(p===null?null:Math.round((100-p)*10)/10,true);
+  }).join('')+'<td><strong style="color:'+(bestT?pdText(bestT.y):'')+'">'+(bestT?bestT.y:'—')+'</strong></td></tr></tbody>';
+  document.getElementById('pd-ratio-table').innerHTML = html;
+}
+
+// ── MONTHLY ──
+var pdMonthFilter = -1;
+function pdMonthly(){
+  var Y = PD.years;
+  document.getElementById('pd-month-filter').innerHTML = ['All Months'].concat(PD_M).map(function(lbl,i){
+    return '<button class="'+((i-1)===pdMonthFilter?'active':'')+'" onclick="pdFilterMonth('+(i-1)+')">'+lbl+'</button>';
+  }).join('');
+  var cols = [['hatched','Hatched',''],['good','Good','good'],['bad','Bad','bad'],['froze','Froze','froze']];
+  var html = '<thead><tr><th class="l">Month</th>'+Y.map(function(y){
+    return cols.map(function(c){ return '<th style="color:'+pdText(y)+'">'+c[1]+' '+String(y).slice(2)+'</th>'; }).join('');
+  }).join('')+'</tr></thead><tbody>';
+  PD_M.forEach(function(mn,m){
+    html += '<tr data-mi="'+m+'"'+(pdMonthFilter>=0 && pdMonthFilter!==m ? ' style="opacity:.3"' : '')+'><td class="l">'+mn+'</td>'+Y.map(function(y){
+      return cols.map(function(c){
+        var v = PD.D[c[0]][y][m];
+        if(v===null) return '<td class="na">—</td>';
+        return '<td class="'+c[2]+(PD.LIVEK[c[0]][y][m]?' live':'')+'"'+(PD.LIVEK[c[0]][y][m]?' title="From Daily Entry (live)"':'')+'>'+pdFmt(v)+'</td>';
+      }).join('');
+    }).join('')+'</tr>';
+  });
+  html += '<tr class="pd-total"><td class="l">TOTAL</td>'+Y.map(function(y){
+    return cols.map(function(c){ return '<td class="'+c[2]+'">'+pdFmt(PD.T[c[0]][y])+'</td>'; }).join('');
+  }).join('')+'</tr></tbody>';
+  document.getElementById('pd-monthly-table').innerHTML = html;
+
+  document.getElementById('pd-stacks').innerHTML = Y.map(function(y){
+    return '<div class="pd-card full"><div class="pd-card-title">'+y+' — Monthly Stacked Breakdown</div><div class="pd-card-sub">Good · Bad · Froze per month · '+pdYearLabel(y).toLowerCase()+'</div><div class="pd-chart tall"><canvas id="pdStack'+y+'"></canvas></div></div>';
+  }).join('');
+  Y.forEach(function(y){
+    var z = function(a){ return a.map(function(v){ return v===null?0:v; }); };
+    pdChart('pdStack'+y,{type:'bar',data:{labels:PD_M,datasets:[
+      {label:'Good',data:z(PD.D.good[y]),backgroundColor:'#42b72a99',borderColor:'#42b72a',borderWidth:1},
+      {label:'Bad',data:z(PD.D.bad[y]),backgroundColor:'#fa3e3e99',borderColor:'#fa3e3e',borderWidth:1},
+      {label:'Froze',data:z(PD.D.froze[y]),backgroundColor:'#1877f299',borderColor:'#1877f2',borderWidth:1}
+    ]},options:pdOpts({scales:{x:Object.assign(pdScaleX(),{stacked:true}),y:Object.assign(pdScaleY(),{stacked:true})}})});
+  });
+}
+function pdFilterMonth(m){
+  pdMonthFilter = m;
+  document.querySelectorAll('#pd-month-filter button').forEach(function(b,i){ b.classList.toggle('active', (i-1)===m); });
+  document.querySelectorAll('#pd-monthly-table tr[data-mi]').forEach(function(r){
+    r.style.opacity = (m===-1 || parseInt(r.getAttribute('data-mi'),10)===m) ? '1' : '.3';
+  });
+}
+
+// ── BOXES ──
+function pdBoxes(){
+  var Y = PD.years, T = PD.T;
+  var stats = [];
+  Y.forEach(function(y,i){
+    var prev = i>0 ? Y[i-1] : null;
+    var trend = '';
+    if(prev && T.boxes[prev] && y<PD.nowY){
+      var ch = Math.round((T.boxes[y]-T.boxes[prev])/T.boxes[prev]*1000)/10;
+      trend = '<div class="pd-stat-sub" style="color:'+(ch>=0?'#1a5c0c':'var(--red)')+';font-weight:700;margin-top:4px">'+(ch>=0?'↑ ':'↓ ')+Math.abs(ch)+'% vs '+prev+'</div>';
+    }
+    stats.push('<div class="pd-stat"><div class="pd-stat-lbl">📦 '+y+' Boxes</div><div class="pd-stat-val" style="color:'+pdText(y)+'">'+pdFmt(T.boxes[y])+'</div><div class="pd-stat-sub">'+pdYearLabel(y).toLowerCase()+'</div>'+trend+'</div>');
+  });
+  Y.forEach(function(y){
+    var per = T.boxes[y] ? Math.round(T.good[y]/T.boxes[y]*10)/10 : null;
+    stats.push('<div class="pd-stat"><div class="pd-stat-lbl">🥚 Good Eggs per Box '+y+'</div><div class="pd-stat-val" style="color:'+pdText(y)+'">'+(per===null?'—':per)+'</div><div class="pd-stat-sub">Good eggs ÷ boxes</div></div>');
+  });
+  document.getElementById('pd-box-stats').innerHTML = stats.join('');
+
+  pdChart('pdBoxLine',{type:'line',data:{labels:PD_M,datasets:Y.map(function(y){ return pdLineDs(String(y), PD.D.boxes[y], pdColor(y), y===2025); })},options:pdOpts()});
+
+  document.getElementById('pd-eff').innerHTML = Y.map(function(y){
+    return '<div class="pd-card"><div class="pd-card-title">Good Eggs per Box — '+y+'</div><div class="pd-card-sub">Efficiency by month</div><div class="pd-chart"><canvas id="pdEff'+y+'"></canvas></div></div>';
+  }).join('');
+  Y.forEach(function(y){
+    var eff = PD.D.good[y].map(function(g,m){ var b=PD.D.boxes[y][m]; return (g!==null && b) ? Math.round(g/b*10)/10 : null; });
+    pdChart('pdEff'+y,{type:'bar',data:{labels:PD_M,datasets:[{label:'Good eggs per box',data:eff,backgroundColor:pdColor(y)+'99',borderColor:pdColor(y),borderWidth:1,borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},PD_TIP,{callbacks:{label:function(ctx){ return ctx.raw+' good eggs per box'; }}})},scales:{x:pdScaleX(),y:pdScaleY()}}});
+  });
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+(function init(){
+  document.getElementById('bd-date').value = todayStr();
+  document.getElementById('gecko-date').value = todayStr();
+  document.getElementById('report-date').value = todayStr();
+  buildGeckoTables();
+  prefillBD();
+  loadBoxesForDate();
+  prefillGecko();
+  updatePendingNotes();
+  updateBDTotals();
+  showPage('entry');
+  if(SHEET_URL){ startLivePolling(); } else { setSyncPill('Not configured','err'); }
+})();
+</script>
+</body>
+</html>
